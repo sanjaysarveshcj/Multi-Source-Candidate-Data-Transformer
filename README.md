@@ -1,4 +1,4 @@
-# Candidate Transformer Service
+# Multi-Source Candidate Data Transformer
 
 A pipeline for extracting, merging, and dynamically reshaping candidate data from multiple heterogeneous sources (ATS JSON, Resume PDF, GitHub, Text, Recruiter CSV).
 
@@ -15,14 +15,20 @@ A pipeline for extracting, merging, and dynamically reshaping candidate data fro
 ## Installation & Setup
 
 1. Ensure you have Python installed.
-2. Activate your virtual environment:
-   ```bash
-   candidate\Scripts\activate
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. Create your virtual environment:
+  ```bash
+  python -m venv candidate
+  ```
+
+3. Activate your virtual environment:
+  ```bash
+  candidate\Scripts\activate
+  ```
+
+4. Install dependencies:
+  ```bash
+  pip install -r requirements.txt
+  ```
 
 ---
 
