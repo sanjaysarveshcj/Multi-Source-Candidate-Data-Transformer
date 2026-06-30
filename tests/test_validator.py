@@ -23,7 +23,7 @@ def test_validation():
 
         experience=[],
 
-        links=[],
+        links={},
 
         years_experience=0,
 

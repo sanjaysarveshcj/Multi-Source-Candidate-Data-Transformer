@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 import pytest
 
 from app.models.candidate import Candidate
@@ -18,13 +19,16 @@ def sample_candidate():
 
         phones=["9876543210"],
 
-        skills=["Python", "Java"],
+        skills=[
+            {"name": "Python", "confidence": 0.85, "sources": ["Resume"]},
+            {"name": "Java", "confidence": 0.85, "sources": ["Resume"]},
+        ],
 
         education=[],
 
         experience=[],
 
-        links=[],
+        links={},
 
         overall_confidence=0.95,
 

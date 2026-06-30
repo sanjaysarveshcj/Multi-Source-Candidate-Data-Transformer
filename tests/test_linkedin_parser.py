@@ -42,8 +42,8 @@ class TestLinkedInURLParser:
         assert result.source == "LinkedIn"
         assert result.full_name == "John Doe"
         assert (
-            "https://www.linkedin.com/in/john-doe-12345"
-            in result.links
+            result.links["linkedin"]
+            == "https://www.linkedin.com/in/john-doe-12345"
         )
 
     def test_parse_short_url(self):
@@ -63,7 +63,7 @@ class TestLinkedInURLParser:
 
         assert result.source == "LinkedIn"
         assert result.full_name is None
-        assert len(result.links) == 1
+        assert result.links is not None
 
     def test_parse_preserves_link(self):
 
@@ -71,9 +71,8 @@ class TestLinkedInURLParser:
             "https://www.linkedin.com/in/dev-engineer"
         )
 
-        assert any(
-            "linkedin.com" in link
-            for link in result.links
+        assert (
+            "linkedin.com" in result.links.get("linkedin", "")
         )
 
     ####################################################

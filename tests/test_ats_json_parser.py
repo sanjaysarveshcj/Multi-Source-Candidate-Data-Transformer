@@ -139,8 +139,8 @@ class TestATSJsonParser:
         })
 
         result = self.parser.parse(data)
-        assert "Chennai" in result.location
-        assert "India" in result.location
+        assert result.location["city"] == "Chennai"
+        assert result.location["country"] == "India"
 
     ####################################################
     # Social profiles → links
@@ -156,8 +156,8 @@ class TestATSJsonParser:
         })
 
         result = self.parser.parse(data)
-        assert "https://github.com/test" in result.links
-        assert "https://linkedin.com/in/test" in result.links
+        assert result.links["github"] == "https://github.com/test"
+        assert result.links["linkedin"] == "https://linkedin.com/in/test"
 
     ####################################################
     # Tags merged with skills

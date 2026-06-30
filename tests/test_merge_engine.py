@@ -13,7 +13,7 @@ def test_merge():
         skills=["Python"],
         education=[],
         experience=[],
-        links=[]
+        links={}
     )
 
     resume = RawCandidate(
@@ -25,12 +25,13 @@ def test_merge():
         skills=["Docker"],
         education=[],
         experience=[],
-        links=[]
+        links={}
     )
 
     merged = MergeEngine().merge([recruiter, resume])
 
     assert merged.full_name == "John Doe"
-    assert "Python" in merged.skills
-    assert "Docker" in merged.skills
-    assert "9999999999" in merged.phones
+    skill_names = [s["name"] for s in merged.skills]
+    assert "Python" in skill_names
+    assert "Docker" in skill_names
+    assert "+19999999999" in merged.phones

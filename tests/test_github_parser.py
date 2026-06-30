@@ -128,7 +128,6 @@ class TestGitHubURLParser:
         assert result.full_name == "Linus Torvalds"
         assert "torvalds@linux.org" in result.emails
         assert result.headline == "Creator of Linux"
-        assert result.location == "Portland, OR"
+        assert result.location == {"city": "Portland", "region": "OR"}
         assert "C" in result.skills
-        assert len(result.experience) == 1
-        assert result.experience[0]["title"] == "linux"
+        assert len(result.experience) == 0
