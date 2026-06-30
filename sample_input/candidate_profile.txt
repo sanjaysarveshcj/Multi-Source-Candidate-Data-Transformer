@@ -1,0 +1,36 @@
+Sanjay Sarvesh
+Full Stack Developer | Chennai, India
+sanjay.sarvesh@example.com | +91-9876543210
+https://github.com/sanjaysarvesh
+https://www.linkedin.com/in/sanjaysarvesh
+
+SUMMARY
+Passionate software engineer with 5+ years of experience building web applications
+and scalable backend systems. Strong expertise in Python, JavaScript, and cloud technologies.
+
+SKILLS
+Python, FastAPI, Django, React, Node.js, PostgreSQL, Docker, Kubernetes, AWS, Git
+
+EXPERIENCE
+
+Senior Backend Engineer
+TechCorp Solutions | Jan 2022 - Jun 2025
+- Designed and built scalable microservices using Python and FastAPI
+- Managed PostgreSQL databases handling 10M+ records
+- Implemented CI/CD pipelines with Docker and GitHub Actions
+
+Software Developer
+StartupXYZ | Mar 2020 - Dec 2021
+- Developed REST APIs and integrated third-party payment services
+- Built responsive front-end interfaces using React
+- Collaborated in agile teams using Scrum methodology
+
+EDUCATION
+
+B.Tech in Computer Science
+Anna University | 2016 - 2020
+CGPA: 8.5/10
+
+CERTIFICATIONS
+- AWS Certified Solutions Architect
+- Docker Certified Associate

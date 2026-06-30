@@ -1,5 +1,7 @@
 import hashlib
 
+from app.logging.logger import logger
+
 
 class CandidateIdGenerator:
 
@@ -16,4 +18,10 @@ class CandidateIdGenerator:
         if candidate.phones:
             base += candidate.phones[0]
 
-        return hashlib.md5(base.encode()).hexdigest()
+        candidate_id = hashlib.md5(base.encode()).hexdigest()
+
+        logger.info(
+            f"Generated candidate ID: {candidate_id}"
+        )
+
+        return candidate_id

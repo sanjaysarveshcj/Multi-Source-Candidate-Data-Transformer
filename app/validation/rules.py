@@ -1,5 +1,7 @@
 import re
 
+from app.logging.logger import logger
+
 
 EMAIL_REGEX = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
 
@@ -11,6 +13,8 @@ class ValidationRules:
 
         if not candidate.full_name:
 
+            logger.warning("Validation: Candidate name is missing")
+
             result.errors.append("Candidate name is missing")
 
     @staticmethod
@@ -18,12 +22,18 @@ class ValidationRules:
 
         if not candidate.emails:
 
+            logger.warning("Validation: No email found")
+
             result.warnings.append("No email found")
             return
 
         for email in candidate.emails:
 
             if not re.match(EMAIL_REGEX, email):
+
+                logger.warning(
+                    f"Validation: Invalid email: {email}"
+                )
 
                 result.errors.append(
                     f"Invalid email: {email}"

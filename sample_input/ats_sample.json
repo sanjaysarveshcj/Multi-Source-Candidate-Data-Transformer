@@ -1,0 +1,40 @@
+{
+    "candidate": {
+        "first_name": "Sanjay",
+        "last_name": "Sarvesh",
+        "email": "sanjay.sarvesh@example.com",
+        "phone": "+91-9876543210",
+        "headline": "Full Stack Developer",
+        "location": "Chennai, Tamil Nadu, India",
+        "skills": ["Python", "FastAPI", "React", "PostgreSQL", "Docker"],
+        "tags": ["backend", "api-development"],
+        "social_profiles": [
+            {"url": "https://github.com/sanjaysarvesh"},
+            {"url": "https://www.linkedin.com/in/sanjaysarvesh"}
+        ],
+        "experience": [
+            {
+                "company": "TechCorp Solutions",
+                "title": "Senior Backend Engineer",
+                "start_date": "2022-01",
+                "end_date": "2025-06",
+                "description": "Built scalable microservices using Python and FastAPI"
+            },
+            {
+                "company": "StartupXYZ",
+                "title": "Software Developer",
+                "start_date": "2020-03",
+                "end_date": "2021-12",
+                "description": "Developed REST APIs and integrated third-party services"
+            }
+        ],
+        "education": [
+            {
+                "institution": "Anna University",
+                "degree": "B.Tech",
+                "field_of_study": "Computer Science",
+                "end_year": 2020
+            }
+        ]
+    }
+}

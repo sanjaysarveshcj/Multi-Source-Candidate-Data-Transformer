@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel
 
 
@@ -5,4 +6,3 @@ class Provenance(BaseModel):
     field: str
     source: str
     method: str
-    confidence: float

@@ -1,6 +1,13 @@
+from app.logging.logger import logger
+
+
 class SkillNormalizer:
 
     def normalize(self, skills):
+
+        logger.info(
+            f"Normalizing {len(skills)} skills..."
+        )
 
         normalized = []
 
@@ -15,5 +22,10 @@ class SkillNormalizer:
                 normalized.append(skill)
 
                 seen.add(skill)
+
+        logger.info(
+            f"Skill normalization complete: "
+            f"{len(normalized)} unique skills"
+        )
 
         return normalized

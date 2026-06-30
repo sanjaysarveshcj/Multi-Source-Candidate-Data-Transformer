@@ -1,5 +1,7 @@
 import re
 
+from app.logging.logger import logger
+
 
 class ContactExtractor:
 
@@ -19,6 +21,8 @@ class ContactExtractor:
 
     def extract(self, text: str):
 
+        logger.info("Extracting contact information...")
+
         emails = list(set(re.findall(self.EMAIL_REGEX, text)))
 
         phones = list(set(re.findall(self.PHONE_REGEX, text)))
@@ -28,6 +32,13 @@ class ContactExtractor:
         linkedin = list(set(re.findall(self.LINKEDIN_REGEX, text)))
 
         github = list(set(re.findall(self.GITHUB_REGEX, text)))
+
+        logger.info(
+            f"Contact extraction complete: "
+            f"{len(emails)} emails, {len(phones)} phones, "
+            f"{len(links)} links, {len(linkedin)} LinkedIn, "
+            f"{len(github)} GitHub"
+        )
 
         return {
             "emails": emails,

@@ -1,3 +1,6 @@
+from app.logging.logger import logger
+
+
 class ListResolver:
 
     def resolve(self, candidates, field):
@@ -21,5 +24,11 @@ class ListResolver:
                     merged.append(value)
 
                     sources.append(candidate.source)
+
+        logger.info(
+            f"List resolved '{field}': "
+            f"{len(merged)} unique values from "
+            f"{len(set(sources))} sources"
+        )
 
         return merged, sources

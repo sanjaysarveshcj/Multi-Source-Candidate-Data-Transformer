@@ -1,9 +1,10 @@
 from typing import List, Optional, Dict
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel, Field
 
 
 class Skill(BaseModel):
-    name: str
+    name: str = Field(description="canonical skill names")
     confidence: float = 1.0
     sources: List[str] = Field(default_factory=list)
 
@@ -11,8 +12,8 @@ class Skill(BaseModel):
 class Experience(BaseModel):
     company: str
     title: str
-    start: Optional[str] = None
-    end: Optional[str] = None
+    start: Optional[str] = Field(None, description="dates as YYYY-MM")
+    end: Optional[str] = Field(None, description="dates as YYYY-MM")
     summary: Optional[str] = None
 
 
@@ -23,29 +24,42 @@ class Education(BaseModel):
     end_year: Optional[int] = None
 
 
+class Location(BaseModel):
+    city: Optional[str] = None
+    region: Optional[str] = None
+    country: Optional[str] = Field(None, description="ISO-3166 alpha-2")
+
+
+class Links(BaseModel):
+    linkedin: Optional[str] = None
+    github: Optional[str] = None
+    portfolio: Optional[str] = None
+    other: List[str] = Field(default_factory=list)
+
+
 class Provenance(BaseModel):
     field: str
     source: str
-    method: str
+    method: str = Field(description="where each value came from")
 
 
 class Candidate(BaseModel):
 
-    candidate_id: Optional[str] = None
+    candidate_id: str
 
-    full_name: Optional[str] = None
+    full_name: str
 
     emails: List[str] = Field(default_factory=list)
 
-    phones: List[str] = Field(default_factory=list)
+    phones: List[str] = Field(default_factory=list, description="E.164 format")
 
-    location: Dict = Field(default_factory=dict)
+    location: Location = Field(default_factory=Location)
 
-    links: Dict = Field(default_factory=dict)
+    links: Links = Field(default_factory=Links)
 
     headline: Optional[str] = None
 
-    years_experience: Optional[int] = None
+    years_experience: Optional[float] = None
 
     skills: List[Skill] = Field(default_factory=list)
 

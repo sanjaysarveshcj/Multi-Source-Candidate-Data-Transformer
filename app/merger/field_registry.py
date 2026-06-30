@@ -1,10 +1,15 @@
 from app.merger.field_resolvers.string_resolver import StringResolver
 from app.merger.field_resolvers.list_resolver import ListResolver
 from app.merger.field_resolvers.object_list_resolver import ObjectListResolver
+from app.merger.field_resolvers.dict_resolver import DictResolver
+from app.merger.field_resolvers.numeric_resolver import NumericResolver
+from app.merger.field_resolvers.skill_resolver import SkillResolver
 
 from app.normalizers.email import EmailNormalizer
 from app.normalizers.phone import PhoneNormalizer
 from app.normalizers.skills import SkillNormalizer
+from app.normalizers.location import LocationNormalizer
+from app.normalizers.links import LinksNormalizer
 
 FIELD_CONFIG = {
 
@@ -19,8 +24,8 @@ FIELD_CONFIG = {
     },
 
     "location": {
-        "resolver": StringResolver(),
-        "normalizer": None,
+        "resolver": DictResolver(),
+        "normalizer": LocationNormalizer(),
     },
 
     "emails": {
@@ -34,12 +39,17 @@ FIELD_CONFIG = {
     },
 
     "skills": {
-        "resolver": ListResolver(),
-        "normalizer": SkillNormalizer(),
+        "resolver": SkillResolver(),
+        "normalizer": None,
     },
 
     "links": {
-        "resolver": ListResolver(),
+        "resolver": DictResolver(),
+        "normalizer": LinksNormalizer(),
+    },
+
+    "years_experience": {
+        "resolver": NumericResolver(),
         "normalizer": None,
     },
 

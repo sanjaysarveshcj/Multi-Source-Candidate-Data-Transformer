@@ -1,25 +1,34 @@
 from pathlib import Path
 
-import yaml
-
 from app.projection.registry import TransformerRegistry
+from app.projection.path_extractor import PathExtractor
+from app.exceptions.projection_exception import ProjectionException
+from app.logging.logger import logger
 
 
 class CandidateProjector:
 
     def __init__(self):
-
-        config_path = (
-            Path(__file__).parent
-            / "config"
-            / "projection.yaml"
-        )
-
-        with open(config_path) as f:
-
-            self.config = yaml.safe_load(f)
-
         self.registry = TransformerRegistry()
+        self.default_config = {
+            "fields": [
+                { "path": "candidate_id", "type": "string" },
+                { "path": "full_name", "type": "string" },
+                { "path": "emails", "type": "string[]" },
+                { "path": "phones", "type": "string[]" },
+                { "path": "location", "type": "object" },
+                { "path": "links", "type": "object" },
+                { "path": "headline", "type": "string" },
+                { "path": "years_experience", "type": "number" },
+                { "path": "skills", "type": "object[]", "normalize": "to_skill_objects" },
+                { "path": "experience", "type": "object[]" },
+                { "path": "education", "type": "object[]" },
+                { "path": "provenance", "type": "object[]" },
+                { "path": "overall_confidence", "type": "number" },
+            ],
+            "on_missing": "null",
+            "include_confidence": True
+        }
 
     ##############################################
 
@@ -41,27 +50,45 @@ class CandidateProjector:
 
     ##############################################
 
-    def project(self, candidate):
+    def project(self, candidate, config=None):
 
+        logger.info("Starting candidate projection...")
+
+        cfg = config if config else self.default_config
         output = {}
 
-        for output_field, config in self.config["fields"].items():
+        on_missing = cfg.get("on_missing", "null")
+        include_confidence = cfg.get("include_confidence", True)
 
-            source = config["source"]
+        for field_cfg in cfg.get("fields", []):
+            out_path = field_cfg.get("path")
+            in_path = field_cfg.get("from", out_path)
 
-            transform = config.get("transform")
+            if not out_path:
+                continue
 
-            value = getattr(candidate, source, None)
+            if not include_confidence and ("confidence" in out_path.lower() or out_path == "overall_confidence"):
+                continue
 
-            value = self.registry.transform(
-                transform,
-                value
-            )
+            value = PathExtractor.extract(candidate, in_path)
 
-            self._set_nested(
-                output,
-                output_field,
-                value
-            )
+            transform_name = field_cfg.get("normalize")
+            if transform_name and value is not None:
+                value = self.registry.transform(transform_name, value)
+
+            is_empty = value is None or (isinstance(value, (list, dict, str)) and not value)
+            if is_empty:
+                if on_missing == "omit":
+                    continue
+                elif on_missing == "error" and field_cfg.get("required"):
+                    raise ProjectionException(f"Missing required field: {out_path}")
+                else:
+                    value = None
+
+            self._set_nested(output, out_path, value)
+
+        logger.info(
+            f"Projection complete: {len(output)} top-level fields"
+        )
 
         return output

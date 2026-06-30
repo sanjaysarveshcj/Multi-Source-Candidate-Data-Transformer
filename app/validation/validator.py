@@ -1,10 +1,13 @@
 from app.validation.result import ValidationResult
 from app.validation.rules import ValidationRules
+from app.logging.logger import logger
 
 
 class CandidateValidator:
 
     def validate(self, candidate):
+
+        logger.info("Starting candidate validation...")
 
         result = ValidationResult()
 
@@ -24,6 +27,16 @@ class CandidateValidator:
 
             result.is_valid = False
 
+            logger.warning(
+                f"Validation errors found: {result.errors}"
+            )
+
+        if result.warnings:
+
+            logger.info(
+                f"Validation warnings: {result.warnings}"
+            )
+
         ##################################
         # Confidence Score
         ##################################
@@ -34,5 +47,12 @@ class CandidateValidator:
         )
 
         result.score = max(0.0, 1.0 - deductions)
+
+        logger.info(
+            f"Validation complete: valid={result.is_valid}, "
+            f"score={result.score:.2f}, "
+            f"{len(result.errors)} errors, "
+            f"{len(result.warnings)} warnings"
+        )
 
         return result

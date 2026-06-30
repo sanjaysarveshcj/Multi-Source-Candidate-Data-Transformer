@@ -5,6 +5,10 @@ from app.projection.transformers.count import CountTransformer
 from app.projection.transformers.join import JoinTransformer
 from app.projection.transformers.uppercase import UppercaseTransformer
 from app.projection.transformers.lowercase import LowercaseTransformer
+from app.projection.transformers.skill_objects import SkillObjectTransformer
+from app.projection.transformers.e164 import E164Transformer
+from app.projection.transformers.canonical import CanonicalTransformer
+from app.logging.logger import logger
 
 
 class TransformerRegistry:
@@ -27,6 +31,12 @@ class TransformerRegistry:
 
             "lowercase": LowercaseTransformer(),
 
+            "to_skill_objects": SkillObjectTransformer(),
+
+            "E164": E164Transformer(),
+
+            "canonical": CanonicalTransformer(),
+
         }
 
     def transform(self, name, value):
@@ -39,8 +49,16 @@ class TransformerRegistry:
 
         if transformer is None:
 
+            logger.error(
+                f"Unknown transformer requested: {name}"
+            )
+
             raise ValueError(
                 f"Unknown transformer: {name}"
             )
+
+        logger.info(
+            f"Applying transformer: {name}"
+        )
 
         return transformer.transform(value)

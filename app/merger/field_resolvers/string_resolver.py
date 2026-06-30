@@ -1,4 +1,5 @@
 from app.settings import SOURCE_PRIORITY
+from app.logging.logger import logger
 
 
 class StringResolver:
@@ -16,6 +17,14 @@ class StringResolver:
 
             if value:
 
+                logger.info(
+                    f"Resolved '{field}' from source: {candidate.source}"
+                )
+
                 return value, [candidate.source]
+
+        logger.info(
+            f"No value found for field: '{field}'"
+        )
 
         return None, []

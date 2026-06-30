@@ -8,6 +8,8 @@ from app.confidence.confidence_engine import ConfidenceEngine
 
 from app.utils.id_generator import CandidateIdGenerator
 
+from app.logging.logger import logger
+
 
 class MergeEngine:
 
@@ -20,6 +22,11 @@ class MergeEngine:
         self.id_generator = CandidateIdGenerator()
 
     def merge(self, candidates):
+
+        logger.info(
+            f"Merging {len(candidates)} candidate sources: "
+            f"{[c.source for c in candidates]}"
+        )
 
         candidate = Candidate()
 
@@ -60,7 +67,7 @@ class MergeEngine:
 
                         source,
 
-                        self.confidence_engine.score(source)
+                        "merge"
 
                     )
 
@@ -101,5 +108,10 @@ class MergeEngine:
         ############################################
 
         candidate.provenance = provenance
+
+        logger.info(
+            f"Merge complete: candidate_id={candidate.candidate_id}, "
+            f"confidence={candidate.overall_confidence:.2f}"
+        )
 
         return candidate

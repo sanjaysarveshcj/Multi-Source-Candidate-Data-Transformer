@@ -1,48 +1,99 @@
+import re
+
+from app.logging.logger import logger
+
+
 class SectionParser:
 
-    SECTION_ALIASES = {
-        "skills": "skills",
-        "technical skills": "skills",
-        "core competencies": "skills",
-
-        "experience": "experience",
-        "work experience": "experience",
-        "professional experience": "experience",
-        "employment history": "experience",
-
-        "education": "education",
-        "academic qualifications": "education",
-
-        "projects": "projects",
-        "certifications": "certifications",
-        "summary": "summary",
-        "profile": "summary",
+    HEADINGS = {
+        "education": [
+            "education",
+            "academic",
+            "qualification",
+            "qualifications"
+        ],
+        "experience": [
+            "experience",
+            "work experience",
+            "professional experience",
+            "employment",
+            "internship",
+            "internships"
+        ],
+        "skills": [
+            "skills",
+            "technical skills",
+            "technologies",
+            "tech stack"
+        ],
+        "projects": [
+            "projects",
+            "project"
+        ],
+        "certifications": [
+            "certifications",
+            "certification",
+            "licenses"
+        ],
+        "achievements": [
+            "achievements",
+            "awards",
+            "accomplishments"
+        ]
     }
 
     def split_sections(self, text: str):
 
-        sections = {"header": []}
+        logger.info("Splitting text into sections...")
+
+        lines = [
+            line.strip()
+            for line in text.splitlines()
+            if line.strip()
+        ]
+
+        sections = {
+            "header": [],
+            "education": [],
+            "experience": [],
+            "skills": [],
+            "projects": [],
+            "certifications": [],
+            "achievements": []
+        }
 
         current = "header"
 
-        for line in text.splitlines():
+        for line in lines:
 
-            clean = line.strip()
+            lower = line.lower()
 
-            if not clean:
+            found = False
+
+            for section, headings in self.HEADINGS.items():
+
+                if any(
+                    re.fullmatch(rf"{re.escape(h)}[:]?", lower)
+                    for h in headings
+                ):
+                    current = section
+                    found = True
+                    logger.info(
+                        f"Section detected: {section}"
+                    )
+                    break
+
+            if found:
                 continue
 
-            lower = clean.lower()
+            sections[current].append(line)
 
-            if lower in self.SECTION_ALIASES:
-                current = self.SECTION_ALIASES[lower]
-
-                sections.setdefault(current, [])
-
-            else:
-                sections.setdefault(current, []).append(clean)
-
-        return {
-            key: "\n".join(value)
-            for key, value in sections.items()
+        section_summary = {
+            k: len(v) for k, v in sections.items() if v
         }
+
+        logger.info(
+            f"Section splitting complete: {section_summary}"
+        )
+
+        return sections

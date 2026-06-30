@@ -1,32 +1,34 @@
+import re
+
+from app.extractors.skills_db import SKILLS
+from app.logging.logger import logger
+
+
 class SkillExtractor:
 
-    def extract(self, section: str):
+    def extract(self, sections):
 
-        if not section:
-            return []
+        logger.info("Extracting skills...")
+
+        text = "\n".join(sections.get("skills", []))
+
+        words = re.findall(
+            r"[A-Za-z0-9.+#-]+",
+            text
+        )
 
         skills = []
 
-        for line in section.split("\n"):
+        for word in words:
 
-            line = line.strip()
+            if word.lower() in SKILLS:
 
-            if not line:
-                continue
+                skills.append(word.title())
 
-            line = line.replace("•", ",")
+        result = sorted(set(skills))
 
-            line = line.replace("|", ",")
+        logger.info(
+            f"Skills extracted: {len(result)} skills found"
+        )
 
-            line = line.replace("/", ",")
-
-            parts = line.split(",")
-
-            for part in parts:
-
-                skill = part.strip()
-
-                if skill:
-                    skills.append(skill)
-
-        return sorted(list(set(skills)))
+        return result

@@ -1,4 +1,5 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel, Field
 
 
@@ -13,7 +14,9 @@ class RawCandidate(BaseModel):
 
     headline: Optional[str] = None
 
-    location: Optional[str] = None
+    location: Dict = Field(default_factory=dict)
+
+    years_experience: Optional[float] = None
 
     skills: List[str] = Field(default_factory=list)
 
@@ -21,4 +24,4 @@ class RawCandidate(BaseModel):
 
     education: List[dict] = Field(default_factory=list)
 
-    links: List[str] = Field(default_factory=list)
+    links: Dict = Field(default_factory=dict)

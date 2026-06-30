@@ -14,23 +14,15 @@ formatter = logging.Formatter(
     "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
 )
 
-########################################
-# File Handler
-########################################
-
 file_handler = logging.FileHandler(LOG_FILE)
 
 file_handler.setFormatter(formatter)
 
-########################################
-# Console Handler
-########################################
 
 console_handler = logging.StreamHandler()
 
 console_handler.setFormatter(formatter)
 
-########################################
 
 if not logger.handlers:
 

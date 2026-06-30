@@ -1,51 +1,41 @@
 fields:
 
-  basic.candidateId:
+  candidate_id:
     source: candidate_id
 
-  basic.name:
+  full_name:
     source: full_name
 
-  basic.headline:
-    source: headline
+  emails:
+    source: emails
 
-  basic.location:
+  phones:
+    source: phones
+
+  location:
     source: location
 
-  contact.primaryEmail:
-    source: emails
-    transform: first
-
-  contact.allEmails:
-    source: emails
-
-  contact.primaryPhone:
-    source: phones
-    transform: first
-
-  contact.links:
+  links:
     source: links
 
-  profile.skills:
-    source: skills
+  headline:
+    source: headline
 
-  profile.skillCount:
-    source: skills
-    transform: length
+  years_experience:
+    source: years_experience
 
-  profile.education:
+  skills:
+    source: skills
+    transform: to_skill_objects
+
+  experience:
+    source: experience
+
+  education:
     source: education
 
-  profile.experience:
-    source: experience
+  provenance:
+    source: provenance
 
-  profile.totalExperience:
-    source: experience
-    transform: count
-
-  metadata.hasExperience:
-    source: experience
-    transform: exists
-
-  metadata.confidence:
+  overall_confidence:
     source: overall_confidence

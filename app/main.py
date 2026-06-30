@@ -1,9 +1,14 @@
-from fastapi import FastAPI, UploadFile, File, Request
+# pyrefly: ignore [missing-import]
+from fastapi import FastAPI, UploadFile, File, Form, Request
+# pyrefly: ignore [missing-import]
+from fastapi.responses import JSONResponse
+from typing import Optional
 from pathlib import Path
 import tempfile
 import shutil
 import uuid
 import time
+import json
 
 from app.pipeline import CandidatePipeline
 from app.logging.logger import logger
@@ -22,9 +27,13 @@ from app.exceptions.base_exception import (
 ############################################################
 
 app = FastAPI(
-    title="Candidate Transformer Service",
-    description="Transforms recruiter CSV + Resume PDF into a unified Candidate Profile",
-    version="1.0.0",
+    title="Multi-Source Candidate Transformer Service",
+    description=(
+        "Transforms candidate data from multiple sources "
+        "(CSV, Resume PDF, GitHub URL, LinkedIn URL, "
+        "ATS JSON, TXT) into a unified Candidate Profile"
+    ),
+    version="2.0.0",
 )
 
 ############################################################
@@ -59,21 +68,34 @@ def health():
 
     return {
         "status": "UP",
-        "service": "Candidate Transformer",
-        "version": "1.0.0",
+        "service": "Multi-Source Candidate Transformer",
+        "version": "2.0.0",
+        "supported_sources": [
+            "Recruiter CSV",
+            "Resume PDF",
+            "GitHub URL",
+            "LinkedIn URL",
+            "ATS JSON",
+            "Text File",
+        ],
     }
 
 
 ############################################################
-# Transform Endpoint
+# Multi-Source Transform Endpoint
 ############################################################
 
 
 @app.post("/transform")
 async def transform(
     request: Request,
-    recruiter_csv: UploadFile = File(...),
-    resume_pdf: UploadFile = File(...),
+    recruiter_csv: Optional[UploadFile] = File(None),
+    resume_pdf: Optional[UploadFile] = File(None),
+    txt_file: Optional[UploadFile] = File(None),
+    ats_json_file: Optional[UploadFile] = File(None),
+    github_url: Optional[str] = Form(None),
+    linkedin_url: Optional[str] = Form(None),
+    projection_config: Optional[str] = Form(None),
 ):
 
     ########################################################
@@ -87,8 +109,38 @@ async def transform(
     start_time = time.time()
 
     logger.info(
-        f"[{request_id}] Incoming transformation request"
+        f"[{request_id}] Incoming multi-source transformation request"
     )
+
+    ########################################################
+    # Validate at least one source
+    ########################################################
+
+    has_source = any([
+        recruiter_csv,
+        resume_pdf,
+        txt_file,
+        ats_json_file,
+        github_url,
+        linkedin_url,
+    ])
+
+    if not has_source:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "error": "At least one data source is required.",
+                "supported_sources": [
+                    "recruiter_csv (file)",
+                    "resume_pdf (file)",
+                    "txt_file (file)",
+                    "ats_json_file (file)",
+                    "github_url (form field)",
+                    "linkedin_url (form field)",
+                ],
+            },
+        )
 
     ########################################################
     # Temporary Directory
@@ -96,52 +148,147 @@ async def transform(
 
     temp_dir = Path(tempfile.mkdtemp())
 
-    csv_path = temp_dir / recruiter_csv.filename
-
-    resume_path = temp_dir / resume_pdf.filename
+    saved_files = []
 
     try:
+        config_dict = None
+        if projection_config:
+            try:
+                config_dict = json.loads(projection_config)
+            except json.JSONDecodeError:
+                return JSONResponse(
+                    status_code=400,
+                    content={"success": False, "error": "Invalid JSON in projection_config"}
+                )
+
+        ####################################################
+        # Pipeline kwargs
+        ####################################################
+
+        pipeline_kwargs = {}
+        if config_dict:
+            pipeline_kwargs["projection_config"] = config_dict
 
         ####################################################
         # Save Recruiter CSV
         ####################################################
 
-        logger.info(
-            f"[{request_id}] Saving recruiter CSV..."
-        )
+        if recruiter_csv:
 
-        with open(csv_path, "wb") as buffer:
-            shutil.copyfileobj(
-                recruiter_csv.file,
-                buffer,
+            logger.info(
+                f"[{request_id}] Saving recruiter CSV..."
             )
+
+            csv_path = temp_dir / recruiter_csv.filename
+
+            with open(csv_path, "wb") as buffer:
+                shutil.copyfileobj(
+                    recruiter_csv.file, buffer
+                )
+
+            saved_files.append(csv_path)
+
+            pipeline_kwargs["csv_path"] = str(csv_path)
 
         ####################################################
         # Save Resume PDF
         ####################################################
 
-        logger.info(
-            f"[{request_id}] Saving resume PDF..."
-        )
+        if resume_pdf:
 
-        with open(resume_path, "wb") as buffer:
-            shutil.copyfileobj(
-                resume_pdf.file,
-                buffer,
+            logger.info(
+                f"[{request_id}] Saving resume PDF..."
             )
+
+            resume_path = temp_dir / resume_pdf.filename
+
+            with open(resume_path, "wb") as buffer:
+                shutil.copyfileobj(
+                    resume_pdf.file, buffer
+                )
+
+            saved_files.append(resume_path)
+
+            pipeline_kwargs["resume_path"] = str(
+                resume_path
+            )
+
+        ####################################################
+        # Save TXT File
+        ####################################################
+
+        if txt_file:
+
+            logger.info(
+                f"[{request_id}] Saving TXT file..."
+            )
+
+            txt_path = temp_dir / txt_file.filename
+
+            with open(txt_path, "wb") as buffer:
+                shutil.copyfileobj(
+                    txt_file.file, buffer
+                )
+
+            saved_files.append(txt_path)
+
+            pipeline_kwargs["txt_path"] = str(txt_path)
+
+        ####################################################
+        # Save ATS JSON File
+        ####################################################
+
+        if ats_json_file:
+
+            logger.info(
+                f"[{request_id}] Saving ATS JSON file..."
+            )
+
+            json_path = temp_dir / ats_json_file.filename
+
+            with open(json_path, "wb") as buffer:
+                shutil.copyfileobj(
+                    ats_json_file.file, buffer
+                )
+
+            saved_files.append(json_path)
+
+            pipeline_kwargs["ats_json"] = str(json_path)
+
+        ####################################################
+        # GitHub URL (string — no file needed)
+        ####################################################
+
+        if github_url:
+
+            logger.info(
+                f"[{request_id}] GitHub URL received: {github_url}"
+            )
+
+            pipeline_kwargs["github_url"] = github_url
+
+        ####################################################
+        # LinkedIn URL (string — no file needed)
+        ####################################################
+
+        if linkedin_url:
+
+            logger.info(
+                f"[{request_id}] LinkedIn URL received: {linkedin_url}"
+            )
+
+            pipeline_kwargs["linkedin_url"] = linkedin_url
 
         ####################################################
         # Execute Pipeline
         ####################################################
 
         logger.info(
-            f"[{request_id}] Executing transformation pipeline..."
+            f"[{request_id}] Executing multi-source "
+            f"transformation pipeline..."
         )
 
-        response = pipeline.run(
-            csv_path=str(csv_path),
-            resume_path=str(resume_path),
-        )
+        response = pipeline.run(**pipeline_kwargs)
 
         ####################################################
         # Processing Time
@@ -153,7 +300,8 @@ async def transform(
         )
 
         logger.info(
-            f"[{request_id}] Pipeline completed successfully in {elapsed}s"
+            f"[{request_id}] Pipeline completed "
+            f"successfully in {elapsed}s"
         )
 
         ####################################################
@@ -175,11 +323,9 @@ async def transform(
 
         try:
 
-            if csv_path.exists():
-                csv_path.unlink()
-
-            if resume_path.exists():
-                resume_path.unlink()
+            for file_path in saved_files:
+                if file_path.exists():
+                    file_path.unlink()
 
             temp_dir.rmdir()
 
@@ -192,3 +338,186 @@ async def transform(
             logger.warning(
                 f"[{request_id}] Cleanup failed: {cleanup_error}"
             )
+
+
+############################################################
+# Individual Source Endpoints
+############################################################
+
+
+@app.post("/transform/github")
+async def transform_github(
+    request: Request,
+    github_url: str = Form(...),
+    projection_config: Optional[str] = Form(None),
+):
+    """Transform candidate data from a GitHub profile URL."""
+
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    start_time = time.time()
+    
+    config_dict = None
+    if projection_config:
+        try:
+            config_dict = json.loads(projection_config)
+        except json.JSONDecodeError:
+            return JSONResponse(status_code=400, content={"success": False, "error": "Invalid JSON in projection_config"})
+
+    logger.info(
+        f"[{request_id}] GitHub-only transformation: {github_url}"
+    )
+
+    response = pipeline.run(github_url=github_url, projection_config=config_dict)
+
+    elapsed = round(time.time() - start_time, 3)
+
+    return {
+        "success": True,
+        "requestId": request_id,
+        "processingTimeSeconds": elapsed,
+        "data": response,
+    }
+
+
+@app.post("/transform/linkedin")
+async def transform_linkedin(
+    request: Request,
+    linkedin_url: str = Form(...),
+    projection_config: Optional[str] = Form(None),
+):
+    """Transform candidate data from a LinkedIn profile URL."""
+
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    start_time = time.time()
+
+    config_dict = None
+    if projection_config:
+        try:
+            config_dict = json.loads(projection_config)
+        except json.JSONDecodeError:
+            return JSONResponse(status_code=400, content={"success": False, "error": "Invalid JSON in projection_config"})
+
+    logger.info(
+        f"[{request_id}] LinkedIn-only transformation: {linkedin_url}"
+    )
+
+    response = pipeline.run(linkedin_url=linkedin_url, projection_config=config_dict)
+
+    elapsed = round(time.time() - start_time, 3)
+
+    return {
+        "success": True,
+        "requestId": request_id,
+        "processingTimeSeconds": elapsed,
+        "data": response,
+    }
+
+
+@app.post("/transform/ats")
+async def transform_ats(
+    request: Request,
+    ats_json_file: UploadFile = File(...),
+    projection_config: Optional[str] = Form(None),
+):
+    """Transform candidate data from an ATS JSON file."""
+
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    start_time = time.time()
+    
+    config_dict = None
+    if projection_config:
+        try:
+            config_dict = json.loads(projection_config)
+        except json.JSONDecodeError:
+            return JSONResponse(status_code=400, content={"success": False, "error": "Invalid JSON in projection_config"})
+
+    temp_dir = Path(tempfile.mkdtemp())
+
+    try:
+
+        json_path = temp_dir / ats_json_file.filename
+
+        with open(json_path, "wb") as buffer:
+            shutil.copyfileobj(
+                ats_json_file.file, buffer
+            )
+
+        ats_source = str(json_path)
+
+        logger.info(
+            f"[{request_id}] ATS-only transformation"
+        )
+
+        response = pipeline.run(ats_json=ats_source, projection_config=config_dict)
+
+        elapsed = round(time.time() - start_time, 3)
+
+        return {
+            "success": True,
+            "requestId": request_id,
+            "processingTimeSeconds": elapsed,
+            "data": response,
+        }
+
+    finally:
+
+        try:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        except Exception:
+            pass
+
+
+@app.post("/transform/txt")
+async def transform_txt(
+    request: Request,
+    txt_file: UploadFile = File(...),
+    projection_config: Optional[str] = Form(None),
+):
+    """Transform candidate data from a plain text file."""
+
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    start_time = time.time()
+    
+    config_dict = None
+    if projection_config:
+        try:
+            config_dict = json.loads(projection_config)
+        except json.JSONDecodeError:
+            return JSONResponse(status_code=400, content={"success": False, "error": "Invalid JSON in projection_config"})
+
+    temp_dir = Path(tempfile.mkdtemp())
+
+    try:
+
+        txt_path = temp_dir / txt_file.filename
+
+        with open(txt_path, "wb") as buffer:
+            shutil.copyfileobj(
+                txt_file.file, buffer
+            )
+
+        logger.info(
+            f"[{request_id}] TXT-only transformation"
+        )
+
+        response = pipeline.run(txt_path=str(txt_path), projection_config=config_dict)
+
+        elapsed = round(time.time() - start_time, 3)
+
+        return {
+            "success": True,
+            "requestId": request_id,
+            "processingTimeSeconds": elapsed,
+            "data": response,
+        }
+
+    finally:
+
+        try:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        except Exception:
+            pass

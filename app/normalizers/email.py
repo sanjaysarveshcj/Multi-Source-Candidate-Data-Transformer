@@ -1,6 +1,13 @@
+from app.logging.logger import logger
+
+
 class EmailNormalizer:
 
     def normalize(self, emails):
+
+        logger.info(
+            f"Normalizing {len(emails)} emails..."
+        )
 
         normalized = []
 
@@ -15,5 +22,10 @@ class EmailNormalizer:
                 seen.add(email)
 
                 normalized.append(email)
+
+        logger.info(
+            f"Email normalization complete: "
+            f"{len(normalized)} unique emails"
+        )
 
         return normalized
