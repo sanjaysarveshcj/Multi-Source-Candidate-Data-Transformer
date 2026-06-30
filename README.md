@@ -6,7 +6,7 @@ A pipeline for extracting, merging, and dynamically reshaping candidate data fro
 - **Multi-Source Data Ingestion**: Parse and normalize data from varying sources and formats (ATS JSON, Resume PDF, GitHub, Text, Recruiter CSV).
 - **Two-Pass Identity Resolution**: Intelligently deduplicates candidates across files using an exact-match pass (emails, phones) followed by a fuzzy-match pass (name similarity + supporting evidence like shared skills).
 - **Merge Engine & Provenance**: Resolve conflicts based on source trust levels and track where every field originated.
-- **Smart Text Extraction**: Robustly splits unstructured text files containing multiple candidates using explicit separators (`---`, `===`).
+- **Smart Text Extraction**: Robustly splits unstructured text files containing multiple candidates using explicit separators.
 - **Dynamic Configurable Projection**: Define JSON output schemas at runtime and let the API reshape data on-the-fly (e.g., extracting list items, renaming keys, dropping confidence fields).
 - **Premium Analytics UI**: A stunning glassmorphism web interface providing real-time data transformation, dynamic processing metrics, and robust file uploads.
 
@@ -45,6 +45,8 @@ The service will run locally on `http://127.0.0.1:8000`.
 ---
 
 ## Usage & Examples
+
+> **Note**: A `sample_input/` directory is included in this repository. It contains sample files (Resume PDF, ATS JSON, Text notes, Recruiter CSV) that you can use to test the transformer's capabilities!
 
 ### Web UI (Analytics Dashboard)
 We provide a premium, glassmorphism-styled web interface for real-time candidate processing.
