@@ -38,7 +38,7 @@ class TestTxtFileParser:
             temp_path = f.name
 
         try:
-            result = self.parser.parse(temp_path)
+            result = self.parser.parse(temp_path)[0]
 
             assert result.source == "Text File"
             assert result.full_name is not None
@@ -62,7 +62,7 @@ class TestTxtFileParser:
             temp_path = f.name
 
         try:
-            result = self.parser.parse(temp_path)
+            result = self.parser.parse(temp_path)[0]
 
             assert result.source == "Text File"
 
@@ -87,7 +87,7 @@ class TestTxtFileParser:
             temp_path = f.name
 
         try:
-            result = self.parser.parse(temp_path)
+            result = self.parser.parse(temp_path)[0]
             assert result.source == "Text File"
         finally:
             os.unlink(temp_path)

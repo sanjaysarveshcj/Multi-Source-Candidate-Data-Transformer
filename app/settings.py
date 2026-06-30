@@ -4,12 +4,10 @@ SOURCE_PRIORITY = {
 
     "Resume": 2,
 
-    "LinkedIn": 3,
+    "GitHub": 3,
 
-    "GitHub": 4,
+    "ATS JSON": 4,
 
-    "ATS JSON": 5,
-
-    "Text File": 6,
+    "Text File": 5,
 
 }

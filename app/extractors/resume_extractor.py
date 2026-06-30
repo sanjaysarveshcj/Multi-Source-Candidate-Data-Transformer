@@ -1,3 +1,5 @@
+from typing import List
+
 from app.models.raw_candidate import RawCandidate
 
 from app.extractors.section_parser import SectionParser
@@ -26,7 +28,7 @@ class ResumeExtractor:
 
         self.experience_extractor = ExperienceExtractor()
 
-    def extract(self, text: str) -> RawCandidate:
+    def extract(self, text: str) -> List[RawCandidate]:
 
         logger.info("Starting resume extraction...")
 
@@ -95,7 +97,7 @@ class ResumeExtractor:
                 "other": other,
             }
 
-            return RawCandidate(
+            return [RawCandidate(
 
                 source="Resume",
 
@@ -112,7 +114,7 @@ class ResumeExtractor:
                 education=education,
 
                 experience=experience,
-            )
+            )]
 
         except CandidateTransformerException:
             raise

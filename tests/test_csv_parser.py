@@ -12,7 +12,7 @@ def test_csv_parser(tmp_path):
 
     parser = RecruiterCSVParser()
 
-    candidate = parser.parse(csv)
+    candidate = parser.parse(csv)[0]
 
     assert candidate.full_name == "John Doe"
     assert candidate.headline == "Software Engineer"

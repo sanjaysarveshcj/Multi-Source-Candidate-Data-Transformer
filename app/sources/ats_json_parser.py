@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 from app.models.raw_candidate import RawCandidate
 from app.sources.parser import SourceParser
@@ -307,7 +308,7 @@ class ATSJsonParser(SourceParser):
     # Main parse method
     ########################################################
 
-    def parse(self, source_path: str) -> RawCandidate:
+    def parse(self, source_path: str) -> List[RawCandidate]:
 
         logger.info(
             "Parsing ATS JSON blob..."
@@ -315,63 +316,68 @@ class ATSJsonParser(SourceParser):
 
         raw = self._load_json(source_path)
 
-        ####################################################
-        # Unwrap nested "candidate" key if present
-        ####################################################
-
-        if "candidate" in raw and isinstance(raw["candidate"], dict):
-            data = raw["candidate"]
-        elif "applicant" in raw and isinstance(raw["applicant"], dict):
-            data = raw["applicant"]
+        if isinstance(raw, list):
+            items = raw
+        elif "candidates" in raw and isinstance(raw["candidates"], list):
+            items = raw["candidates"]
+        elif "applicants" in raw and isinstance(raw["applicants"], list):
+            items = raw["applicants"]
         else:
-            data = raw
+            items = [raw]
+
+        candidates = []
+        for raw_item in items:
+            ####################################################
+            # Unwrap nested "candidate" key if present
+            ####################################################
+
+            if "candidate" in raw_item and isinstance(raw_item["candidate"], dict):
+                data = raw_item["candidate"]
+            elif "applicant" in raw_item and isinstance(raw_item["applicant"], dict):
+                data = raw_item["applicant"]
+            else:
+                data = raw_item
 
         ####################################################
         # Extract fields
         ####################################################
 
-        full_name = self._extract_name(data)
+            full_name = self._extract_name(data)
 
-        headline = (
-            data.get("headline")
-            or data.get("title")
-            or data.get("current_title")
-        )
+            headline = (
+                data.get("headline")
+                or data.get("title")
+                or data.get("current_title")
+            )
 
-        emails = self._to_list(
-            data.get("email", data.get("emails"))
-        )
+            emails = self._to_list(
+                data.get("email", data.get("emails"))
+            )
 
-        phones = self._to_list(
-            data.get("phone", data.get("phones"))
-        )
+            phones = self._to_list(
+                data.get("phone", data.get("phones"))
+            )
 
-        location = self._extract_location(data)
+            location = self._extract_location(data)
+            links = self._extract_links(data)
+            skills = self._extract_skills(data)
+            experience = self._extract_experience(data)
+            education = self._extract_education(data)
 
-        links = self._extract_links(data)
-
-        skills = self._extract_skills(data)
-
-        experience = self._extract_experience(data)
-
-        education = self._extract_education(data)
+            candidates.append(RawCandidate(
+                source="ATS JSON",
+                full_name=full_name,
+                headline=headline,
+                location=location,
+                emails=emails,
+                phones=phones,
+                skills=skills,
+                experience=experience,
+                education=education,
+                links=links,
+            ))
 
         logger.info(
-            f"ATS JSON parsed: {full_name} "
-            f"({len(skills)} skills, "
-            f"{len(experience)} experience entries, "
-            f"{len(education)} education entries)"
+            f"ATS JSON parsed: {len(candidates)} candidates"
         )
-
-        return RawCandidate(
-            source="ATS JSON",
-            full_name=full_name,
-            headline=headline,
-            location=location,
-            emails=emails,
-            phones=phones,
-            skills=skills,
-            experience=experience,
-            education=education,
-            links=links,
-        )
+        return candidates

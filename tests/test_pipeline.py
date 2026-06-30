@@ -1,17 +1,26 @@
 from unittest.mock import MagicMock
 
 from app.pipeline import CandidatePipeline
+from app.models.raw_candidate import RawCandidate
 
 
 def test_pipeline():
 
     pipeline = CandidatePipeline()
 
-    pipeline.csv_parser.parse = MagicMock()
+    pipeline.csv_parser.parse = MagicMock(return_value=[RawCandidate(
+        source="Recruiter CSV", full_name="John Doe",
+        emails=[], phones=[], skills=[], education=[], experience=[],
+        links={"linkedin": None, "github": None, "portfolio": None, "other": []}
+    )])
 
     pipeline.resume_parser.parse = MagicMock()
 
-    pipeline.resume_extractor.extract = MagicMock()
+    pipeline.resume_extractor.extract = MagicMock(return_value=[RawCandidate(
+        source="Resume", full_name="John Doe",
+        emails=[], phones=[], skills=[], education=[], experience=[],
+        links={"linkedin": None, "github": None, "portfolio": None, "other": []}
+    )])
 
     pipeline.merge_engine.merge = MagicMock()
 

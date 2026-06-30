@@ -122,7 +122,7 @@ class TestGitHubURLParser:
 
         result = self.parser.parse(
             "https://github.com/torvalds"
-        )
+        )[0]
 
         assert result.source == "GitHub"
         assert result.full_name == "Linus Torvalds"

@@ -30,7 +30,7 @@ app = FastAPI(
     title="Multi-Source Candidate Transformer Service",
     description=(
         "Transforms candidate data from multiple sources "
-        "(CSV, Resume PDF, GitHub URL, LinkedIn URL, "
+        "(CSV, Resume PDF, GitHub URL, "
         "ATS JSON, TXT) into a unified Candidate Profile"
     ),
     version="2.0.0",
@@ -74,7 +74,6 @@ def health():
             "Recruiter CSV",
             "Resume PDF",
             "GitHub URL",
-            "LinkedIn URL",
             "ATS JSON",
             "Text File",
         ],
@@ -94,7 +93,7 @@ async def transform(
     txt_file: Optional[UploadFile] = File(None),
     ats_json_file: Optional[UploadFile] = File(None),
     github_url: Optional[str] = Form(None),
-    linkedin_url: Optional[str] = Form(None),
+
     projection_config: Optional[str] = Form(None),
 ):
 
@@ -122,7 +121,6 @@ async def transform(
         txt_file,
         ats_json_file,
         github_url,
-        linkedin_url,
     ])
 
     if not has_source:
@@ -137,7 +135,6 @@ async def transform(
                     "txt_file (file)",
                     "ats_json_file (file)",
                     "github_url (form field)",
-                    "linkedin_url (form field)",
                 ],
             },
         )
@@ -268,18 +265,6 @@ async def transform(
             pipeline_kwargs["github_url"] = github_url
 
         ####################################################
-        # LinkedIn URL (string — no file needed)
-        ####################################################
-
-        if linkedin_url:
-
-            logger.info(
-                f"[{request_id}] LinkedIn URL received: {linkedin_url}"
-            )
-
-            pipeline_kwargs["linkedin_url"] = linkedin_url
-
-        ####################################################
         # Execute Pipeline
         ####################################################
 
@@ -380,39 +365,6 @@ async def transform_github(
     }
 
 
-@app.post("/transform/linkedin")
-async def transform_linkedin(
-    request: Request,
-    linkedin_url: str = Form(...),
-    projection_config: Optional[str] = Form(None),
-):
-    """Transform candidate data from a LinkedIn profile URL."""
-
-    request_id = str(uuid.uuid4())
-    request.state.request_id = request_id
-    start_time = time.time()
-
-    config_dict = None
-    if projection_config:
-        try:
-            config_dict = json.loads(projection_config)
-        except json.JSONDecodeError:
-            return JSONResponse(status_code=400, content={"success": False, "error": "Invalid JSON in projection_config"})
-
-    logger.info(
-        f"[{request_id}] LinkedIn-only transformation: {linkedin_url}"
-    )
-
-    response = pipeline.run(linkedin_url=linkedin_url, projection_config=config_dict)
-
-    elapsed = round(time.time() - start_time, 3)
-
-    return {
-        "success": True,
-        "requestId": request_id,
-        "processingTimeSeconds": elapsed,
-        "data": response,
-    }
 
 
 @app.post("/transform/ats")

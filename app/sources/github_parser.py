@@ -1,5 +1,6 @@
 import requests
 import re
+from typing import List
 
 from app.models.raw_candidate import RawCandidate
 from app.sources.parser import SourceParser
@@ -123,7 +124,7 @@ class GitHubURLParser(SourceParser):
     # Main parse method
     ########################################################
 
-    def parse(self, source_path: str) -> RawCandidate:
+    def parse(self, source_path: str) -> List[RawCandidate]:
 
         username = self._extract_username(source_path)
 
@@ -186,7 +187,7 @@ class GitHubURLParser(SourceParser):
             f"({len(skills)} skills)"
         )
 
-        return RawCandidate(
+        return [RawCandidate(
             source="GitHub",
             full_name=full_name,
             headline=headline,
@@ -197,4 +198,4 @@ class GitHubURLParser(SourceParser):
             experience=experience,
             education=[],
             links=links,
-        )
+        )]

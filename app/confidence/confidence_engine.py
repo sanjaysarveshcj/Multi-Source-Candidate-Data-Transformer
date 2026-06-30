@@ -6,7 +6,6 @@ class ConfidenceEngine:
     SOURCE_CONFIDENCE = {
         "Recruiter CSV": 0.95,
         "Resume": 0.85,
-        "LinkedIn": 0.70,
         "GitHub": 0.80,
         "ATS JSON": 0.90,
         "Text File": 0.75,

@@ -13,7 +13,7 @@ Email: john@gmail.com
 
     extractor = ResumeExtractor()
 
-    candidate = extractor.extract(text)
+    candidate = extractor.extract(text)[0]
 
     assert candidate.full_name == "John Doe"
 

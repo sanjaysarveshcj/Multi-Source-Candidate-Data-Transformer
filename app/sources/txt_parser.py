@@ -1,3 +1,4 @@
+from typing import List
 from app.models.raw_candidate import RawCandidate
 from app.sources.parser import SourceParser
 from app.extractors.resume_extractor import ResumeExtractor
@@ -52,7 +53,7 @@ class TxtFileParser(SourceParser):
     # Main parse method
     ########################################################
 
-    def parse(self, source_path: str) -> RawCandidate:
+    def parse(self, source_path: str) -> List[RawCandidate]:
 
         logger.info(
             f"Parsing TXT file: {source_path}"
@@ -62,23 +63,22 @@ class TxtFileParser(SourceParser):
 
         if not text.strip():
             logger.warning(
-                "TXT file is empty, returning empty candidate"
+                "TXT file is empty, returning empty list"
             )
-            return RawCandidate(source="Text File")
+            return [RawCandidate(source="Text File")]
 
         ####################################################
         # Reuse ResumeExtractor for structured extraction
         ####################################################
 
-        candidate = self.extractor.extract(text)
+        candidates = self.extractor.extract(text)
 
         # Override source label
-        candidate.source = "Text File"
+        for candidate in candidates:
+            candidate.source = "Text File"
 
         logger.info(
-            f"TXT file parsed: {candidate.full_name} "
-            f"({len(candidate.skills)} skills, "
-            f"{len(candidate.experience)} experience entries)"
+            f"TXT file parsed: {len(candidates)} candidates"
         )
 
-        return candidate
+        return candidates

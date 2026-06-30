@@ -45,7 +45,7 @@ class TestATSJsonParser:
             }
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
 
         assert result.source == "ATS JSON"
         assert result.full_name == "Sanjay Sarvesh"
@@ -68,7 +68,7 @@ class TestATSJsonParser:
             "skills": ["React", "Node.js"],
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
 
         assert result.full_name == "Jane Doe"
         assert "jane@example.com" in result.emails
@@ -97,7 +97,7 @@ class TestATSJsonParser:
             temp_path = f.name
 
         try:
-            result = self.parser.parse(temp_path)
+            result = self.parser.parse(temp_path)[0]
             assert result.full_name == "File Candidate"
             assert "file@test.com" in result.emails
         finally:
@@ -114,7 +114,7 @@ class TestATSJsonParser:
             "last_name": "Doe",
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
         assert result.full_name == "John Doe"
 
     def test_name_fallback_to_name_field(self):
@@ -123,7 +123,7 @@ class TestATSJsonParser:
             "name": "Single Name Field",
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
         assert result.full_name == "Single Name Field"
 
     ####################################################
@@ -138,7 +138,7 @@ class TestATSJsonParser:
             "country": "India",
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
         assert result.location["city"] == "Chennai"
         assert result.location["country"] == "India"
 
@@ -155,7 +155,7 @@ class TestATSJsonParser:
             ]
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
         assert result.links["github"] == "https://github.com/test"
         assert result.links["linkedin"] == "https://linkedin.com/in/test"
 
@@ -170,7 +170,7 @@ class TestATSJsonParser:
             "tags": ["backend", "api"],
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
         assert "Python" in result.skills
         assert "backend" in result.skills
         assert "api" in result.skills
@@ -185,7 +185,7 @@ class TestATSJsonParser:
             "email": ["a@test.com", "b@test.com"],
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
         assert "a@test.com" in result.emails
         assert "b@test.com" in result.emails
 
@@ -201,5 +201,5 @@ class TestATSJsonParser:
             }
         })
 
-        result = self.parser.parse(data)
+        result = self.parser.parse(data)[0]
         assert result.full_name == "Applicant Wrapper"
