@@ -1,0 +1,51 @@
+fields:
+
+  basic.candidateId:
+    source: candidate_id
+
+  basic.name:
+    source: full_name
+
+  basic.headline:
+    source: headline
+
+  basic.location:
+    source: location
+
+  contact.primaryEmail:
+    source: emails
+    transform: first
+
+  contact.allEmails:
+    source: emails
+
+  contact.primaryPhone:
+    source: phones
+    transform: first
+
+  contact.links:
+    source: links
+
+  profile.skills:
+    source: skills
+
+  profile.skillCount:
+    source: skills
+    transform: length
+
+  profile.education:
+    source: education
+
+  profile.experience:
+    source: experience
+
+  profile.totalExperience:
+    source: experience
+    transform: count
+
+  metadata.hasExperience:
+    source: experience
+    transform: exists
+
+  metadata.confidence:
+    source: overall_confidence

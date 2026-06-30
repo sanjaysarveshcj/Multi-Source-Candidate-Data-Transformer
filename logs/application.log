@@ -1,0 +1,9 @@
+2026-06-30 10:44:16,427 | INFO | candidate_transformer | Health check called
+2026-06-30 10:44:41,308 | INFO | candidate_transformer | Health check called
+2026-06-30 10:45:12,904 | INFO | candidate_transformer | Health check called
+2026-06-30 10:46:02,884 | INFO | candidate_transformer | [cd44e6e3-1d34-408b-8f7b-48a484e327d4] Incoming transformation request
+2026-06-30 10:46:02,893 | INFO | candidate_transformer | [cd44e6e3-1d34-408b-8f7b-48a484e327d4] Saving recruiter CSV...
+2026-06-30 10:46:02,896 | INFO | candidate_transformer | [cd44e6e3-1d34-408b-8f7b-48a484e327d4] Saving resume PDF...
+2026-06-30 10:46:02,902 | INFO | candidate_transformer | [cd44e6e3-1d34-408b-8f7b-48a484e327d4] Executing transformation pipeline...
+2026-06-30 10:46:03,557 | INFO | candidate_transformer | [cd44e6e3-1d34-408b-8f7b-48a484e327d4] Pipeline completed successfully in 0.674s
+2026-06-30 10:46:03,561 | INFO | candidate_transformer | [cd44e6e3-1d34-408b-8f7b-48a484e327d4] Temporary files cleaned
