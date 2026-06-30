@@ -32,7 +32,8 @@ class EducationExtractor:
         "College",
         "School",
         "Academy",
-        "Polytechnic"
+        "Polytechnic",
+        "Vidyalaya"
     ]
 
     def extract(self, sections):

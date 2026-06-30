@@ -56,7 +56,7 @@ def main():
     if args.ats_json:
         pipeline_kwargs["ats_json"] = args.ats_json
     if args.github:
-        pipeline_kwargs["github_url"] = args.github
+        pipeline_kwargs["github_urls"] = [u.strip() for u in args.github.split(",") if u.strip()]
         
     if args.projection_config:
         try:

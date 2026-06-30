@@ -3,10 +3,12 @@
 A pipeline for extracting, merging, and dynamically reshaping candidate data from multiple heterogeneous sources (ATS JSON, Resume PDF, GitHub, Text, Recruiter CSV).
 
 ## Features
-- **Multi-Source Data Ingestion**: Parse and normalize data from varying sources and formats.
+- **Multi-Source Data Ingestion**: Parse and normalize data from varying sources and formats (ATS JSON, Resume PDF, GitHub, Text, Recruiter CSV).
+- **Two-Pass Identity Resolution**: Intelligently deduplicates candidates across files using an exact-match pass (emails, phones) followed by a fuzzy-match pass (name similarity + supporting evidence like shared skills).
 - **Merge Engine & Provenance**: Resolve conflicts based on source trust levels and track where every field originated.
+- **Smart Text Extraction**: Robustly splits unstructured text files containing multiple candidates using explicit separators (`---`, `===`).
 - **Dynamic Configurable Projection**: Define JSON output schemas at runtime and let the API reshape data on-the-fly (e.g., extracting list items, renaming keys, dropping confidence fields).
-- **Dynamic Schema Validation**: Validates the dynamically projected payload against constraints like `required` fields and specific data `types`.
+- **Premium Analytics UI**: A stunning glassmorphism web interface providing real-time data transformation, dynamic processing metrics, and robust file uploads.
 
 ---
 
@@ -53,7 +55,7 @@ A standalone CLI tool is provided to run transformations locally and save the ou
 python cli.py \
   --csv sample_input/recruiter.csv \
   --resume sample_input/resume.pdf \
-  --github https://github.com/torvalds \
+  --github "https://github.com/torvalds, https://github.com/sanjaysarveshcj" \
   --output result.json
 ```
 
