@@ -2,6 +2,10 @@ from app.logging.logger import logger
 
 class SkillResolver:
 
+    def __init__(self, confidence_engine):
+
+        self.confidence_engine = confidence_engine
+
     def resolve(self, candidates, field):
 
         skill_map = {}
@@ -19,7 +23,6 @@ class SkillResolver:
                 if normalized_name not in skill_map:
                     skill_map[normalized_name] = {
                         "name": normalized_name,
-                        "confidence": 1.0,
                         "sources": []
                     }
 
@@ -27,6 +30,15 @@ class SkillResolver:
                     skill_map[normalized_name]["sources"].append(source)
                 
                 all_sources.add(source)
+
+        # Compute confidence per skill from its sources
+        for skill_entry in skill_map.values():
+
+            skill_entry["confidence"] = (
+                self.confidence_engine.skill_score(
+                    skill_entry["sources"]
+                )
+            )
 
         merged = list(skill_map.values())
 

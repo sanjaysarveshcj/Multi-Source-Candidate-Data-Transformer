@@ -1137,3 +1137,183 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 2026-06-30 15:25:38,791 | INFO | candidate_transformer | Projection complete: 13 top-level fields
 2026-06-30 15:25:38,791 | INFO | candidate_transformer | [6880acf7-c252-43b8-b5ec-9e19b00a4bdb] Pipeline completed successfully in 0.492s
 2026-06-30 15:25:38,794 | INFO | candidate_transformer | [6880acf7-c252-43b8-b5ec-9e19b00a4bdb] Temporary files cleaned
+2026-06-30 15:45:35,300 | INFO | candidate_transformer | [30bad789-f874-4fc8-9f55-aab981fb2f0c] GitHub-only transformation: https://github.com/torvalds
+2026-06-30 15:45:35,301 | INFO | candidate_transformer | Parsing GitHub URL...
+2026-06-30 15:45:35,301 | INFO | candidate_transformer | Fetching GitHub profile for: torvalds
+2026-06-30 15:45:36,623 | INFO | candidate_transformer | GitHub profile parsed: Linus Torvalds (3 skills)
+2026-06-30 15:45:36,630 | INFO | candidate_transformer | Merging 1 candidate sources: ['GitHub']
+2026-06-30 15:45:36,631 | INFO | candidate_transformer | Resolved 'full_name' from source: GitHub
+2026-06-30 15:45:36,631 | INFO | candidate_transformer | Building provenance: field=full_name, source=GitHub, method=merge
+2026-06-30 15:45:36,631 | INFO | candidate_transformer | No value found for field: 'headline'
+2026-06-30 15:45:36,633 | INFO | candidate_transformer | Dict resolved 'location': 2 keys from 1 sources
+2026-06-30 15:45:36,633 | INFO | candidate_transformer | Normalizing location: {'city': 'Portland', 'region': 'OR'}
+2026-06-30 15:45:36,633 | INFO | candidate_transformer | Location normalization complete: {'city': 'Portland', 'region': 'OR', 'country': None}
+2026-06-30 15:45:36,633 | INFO | candidate_transformer | Building provenance: field=location, source=GitHub, method=merge
+2026-06-30 15:45:36,633 | INFO | candidate_transformer | List resolved 'emails': 0 unique values from 0 sources
+2026-06-30 15:45:36,633 | INFO | candidate_transformer | Normalizing 0 emails...
+2026-06-30 15:45:36,633 | INFO | candidate_transformer | Email normalization complete: 0 unique emails
+2026-06-30 15:45:36,634 | INFO | candidate_transformer | List resolved 'phones': 0 unique values from 0 sources
+2026-06-30 15:45:36,634 | INFO | candidate_transformer | Normalizing 0 phone numbers to E.164...
+2026-06-30 15:45:36,634 | INFO | candidate_transformer | Phone normalization complete: 0 unique numbers (E.164)
+2026-06-30 15:45:36,634 | INFO | candidate_transformer | Skill list resolved 'skills': 3 unique skills from 1 sources
+2026-06-30 15:45:36,635 | INFO | candidate_transformer | Building provenance: field=skills, source=GitHub, method=merge
+2026-06-30 15:45:36,635 | INFO | candidate_transformer | Dict resolved 'links': 1 keys from 1 sources
+2026-06-30 15:45:36,635 | INFO | candidate_transformer | Normalizing links: {'github': 'https://github.com/torvalds'}
+2026-06-30 15:45:36,635 | INFO | candidate_transformer | Links normalization complete: {'linkedin': None, 'github': 'https://github.com/torvalds', 'portfolio': None, 'other': []}
+2026-06-30 15:45:36,635 | INFO | candidate_transformer | Building provenance: field=links, source=GitHub, method=merge
+2026-06-30 15:45:36,636 | INFO | candidate_transformer | No value found for field: 'years_experience'
+2026-06-30 15:45:36,636 | INFO | candidate_transformer | Object list resolved 'experience': 0 unique objects from 0 sources
+2026-06-30 15:45:36,636 | INFO | candidate_transformer | Object list resolved 'education': 0 unique objects from 0 sources
+2026-06-30 15:45:36,636 | INFO | candidate_transformer | Confidence score for 'GitHub': 0.8
+2026-06-30 15:45:36,636 | INFO | candidate_transformer | Generated candidate ID: 760d4d002e8bf15b6f62b0d1380122e9
+2026-06-30 15:45:36,637 | INFO | candidate_transformer | Merge complete: candidate_id=760d4d002e8bf15b6f62b0d1380122e9, confidence=0.80
+2026-06-30 15:45:36,637 | INFO | candidate_transformer | Starting candidate validation...
+2026-06-30 15:45:36,637 | WARNING | candidate_transformer | Validation: No email found
+2026-06-30 15:45:36,638 | INFO | candidate_transformer | Validation warnings: ['No email found', 'No phone number found', 'Experience section missing', 'Education section missing']
+2026-06-30 15:45:36,638 | INFO | candidate_transformer | Validation complete: valid=True, score=0.80, 0 errors, 4 warnings
+2026-06-30 15:45:36,638 | INFO | candidate_transformer | Starting candidate projection...
+2026-06-30 15:45:36,638 | INFO | candidate_transformer | Applying transformer: to_skill_objects
+2026-06-30 15:45:36,638 | INFO | candidate_transformer | Projection complete: 13 top-level fields
+2026-06-30 20:43:28,863 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:28,864 | INFO | candidate_transformer | ATS JSON parsed: Sanjay Sarvesh (2 skills, 1 experience entries, 1 education entries)
+2026-06-30 20:43:28,867 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:28,867 | INFO | candidate_transformer | ATS JSON parsed: Jane Doe (2 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:28,869 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:28,882 | INFO | candidate_transformer | ATS JSON parsed: File Candidate (0 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:28,885 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:28,885 | INFO | candidate_transformer | ATS JSON parsed: John Doe (0 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:28,887 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:28,887 | INFO | candidate_transformer | ATS JSON parsed: Single Name Field (0 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:28,890 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:28,890 | INFO | candidate_transformer | ATS JSON parsed: None (0 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:29,138 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:29,138 | INFO | candidate_transformer | ATS JSON parsed: None (0 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:29,149 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:29,149 | INFO | candidate_transformer | ATS JSON parsed: None (3 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:29,151 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:29,151 | INFO | candidate_transformer | ATS JSON parsed: None (0 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:29,152 | INFO | candidate_transformer | Parsing ATS JSON blob...
+2026-06-30 20:43:29,152 | INFO | candidate_transformer | ATS JSON parsed: Applicant Wrapper (0 skills, 0 experience entries, 0 education entries)
+2026-06-30 20:43:29,163 | INFO | candidate_transformer | Parsing recruiter CSV: C:\Users\hp\AppData\Local\Temp\pytest-of-hp\pytest-11\test_csv_parser0\candidate.csv
+2026-06-30 20:43:29,185 | INFO | candidate_transformer | CSV loaded with 1 rows
+2026-06-30 20:43:29,187 | INFO | candidate_transformer | CSV parsed successfully: John Doe
+2026-06-30 20:43:29,189 | INFO | candidate_transformer | Parsing GitHub URL...
+2026-06-30 20:43:29,190 | INFO | candidate_transformer | Fetching GitHub profile for: torvalds
+2026-06-30 20:43:30,565 | INFO | candidate_transformer | GitHub profile parsed: Linus Torvalds (3 skills)
+2026-06-30 20:43:30,565 | INFO | candidate_transformer | Merging 1 candidate sources: ['GitHub']
+2026-06-30 20:43:30,565 | INFO | candidate_transformer | Resolved 'full_name' from source: GitHub
+2026-06-30 20:43:30,565 | INFO | candidate_transformer | Building provenance: field=full_name, source=GitHub, method=merge
+2026-06-30 20:43:30,565 | INFO | candidate_transformer | No value found for field: 'headline'
+2026-06-30 20:43:30,566 | INFO | candidate_transformer | Dict resolved 'location': 2 keys from 1 sources
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Normalizing location: {'city': 'Portland', 'region': 'OR'}
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Location normalization complete: {'city': 'Portland', 'region': 'OR', 'country': None}
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Building provenance: field=location, source=GitHub, method=merge
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | List resolved 'emails': 0 unique values from 0 sources
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Normalizing 0 emails...
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Email normalization complete: 0 unique emails
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | List resolved 'phones': 0 unique values from 0 sources
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Normalizing 0 phone numbers to E.164...
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Phone normalization complete: 0 unique numbers (E.164)
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Skill confidence from ['GitHub']: 0.8
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Skill confidence from ['GitHub']: 0.8
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Skill confidence from ['GitHub']: 0.8
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Skill list resolved 'skills': 3 unique skills from 1 sources
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Building provenance: field=skills, source=GitHub, method=merge
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Dict resolved 'links': 1 keys from 1 sources
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Normalizing links: {'github': 'https://github.com/torvalds'}
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Links normalization complete: {'linkedin': None, 'github': 'https://github.com/torvalds', 'portfolio': None, 'other': []}
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Building provenance: field=links, source=GitHub, method=merge
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | No value found for field: 'years_experience'
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Object list resolved 'experience': 0 unique objects from 0 sources
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Object list resolved 'education': 0 unique objects from 0 sources
+2026-06-30 20:43:30,567 | INFO | candidate_transformer | Confidence score for 'GitHub': 0.8
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Generated candidate ID: 760d4d002e8bf15b6f62b0d1380122e9
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Merge complete: candidate_id=760d4d002e8bf15b6f62b0d1380122e9, confidence=0.80
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Starting candidate validation...
+2026-06-30 20:43:30,568 | WARNING | candidate_transformer | Validation: No email found
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Validation warnings: ['No email found', 'No phone number found', 'Experience section missing', 'Education section missing']
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Validation complete: valid=True, score=0.80, 0 errors, 4 warnings
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Starting candidate projection...
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Applying transformer: canonical
+2026-06-30 20:43:30,568 | INFO | candidate_transformer | Projection complete: 4 top-level fields
+2026-06-30 20:43:30,584 | INFO | candidate_transformer | Fetching GitHub profile for: torvalds
+2026-06-30 20:43:30,585 | INFO | candidate_transformer | GitHub profile parsed: Linus Torvalds (3 skills)
+2026-06-30 20:43:30,600 | INFO | candidate_transformer | Parsing LinkedIn URL: https://www.linkedin.com/in/john-doe-12345
+2026-06-30 20:43:30,616 | INFO | candidate_transformer | Parsing LinkedIn URL: linkedin.com/in/sanjay-sarvesh
+2026-06-30 20:43:30,619 | INFO | candidate_transformer | Parsing LinkedIn URL: https://example.com/not-linkedin
+2026-06-30 20:43:30,619 | WARNING | candidate_transformer | Could not extract LinkedIn username from: https://example.com/not-linkedin
+2026-06-30 20:43:30,625 | INFO | candidate_transformer | Parsing LinkedIn URL: https://www.linkedin.com/in/dev-engineer
+2026-06-30 20:43:30,631 | INFO | candidate_transformer | Parsing LinkedIn URL: 
+2026-06-30 20:43:30,631 | WARNING | candidate_transformer | Could not extract LinkedIn username from: 
+2026-06-30 20:43:30,633 | INFO | candidate_transformer | Parsing LinkedIn URL: https://www.linkedin.com/in/test-user
+2026-06-30 20:43:30,645 | INFO | candidate_transformer | Parsing Recruiter CSV...
+2026-06-30 20:43:30,645 | INFO | candidate_transformer | Parsing Resume PDF...
+2026-06-30 20:43:30,656 | INFO | candidate_transformer | Starting resume extraction...
+2026-06-30 20:43:30,656 | INFO | candidate_transformer | Splitting text into sections...
+2026-06-30 20:43:30,658 | INFO | candidate_transformer | Section splitting complete: {'header': 3}
+2026-06-30 20:43:30,658 | INFO | candidate_transformer | Sections identified: ['header', 'education', 'experience', 'skills', 'projects', 'certifications', 'achievements']
+2026-06-30 20:43:30,658 | INFO | candidate_transformer | Extracting contact information...
+2026-06-30 20:43:30,659 | INFO | candidate_transformer | Contact extraction complete: 1 emails, 0 phones, 0 links, 0 LinkedIn, 0 GitHub
+2026-06-30 20:43:30,659 | INFO | candidate_transformer | Contacts extracted: 1 emails, 0 phones
+2026-06-30 20:43:30,659 | INFO | candidate_transformer | Extracting candidate name from header...
+2026-06-30 20:43:30,659 | INFO | candidate_transformer | Name extracted: John Doe
+2026-06-30 20:43:30,659 | INFO | candidate_transformer | Name extracted: John Doe
+2026-06-30 20:43:30,659 | INFO | candidate_transformer | Extracting skills...
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Skills extracted: 0 skills found
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Skills extracted: 0 skills
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Extracting education information...
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | No education section found
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Education extracted: 0 entries
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Extracting experience information...
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Experience extraction complete: 0 entries
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Experience extracted: 0 entries
+2026-06-30 20:43:30,660 | INFO | candidate_transformer | Resume extraction completed successfully
+2026-06-30 20:43:30,663 | INFO | candidate_transformer | Parsing TXT file: C:\Users\hp\AppData\Local\Temp\tmpbyl70olp.txt
+2026-06-30 20:43:30,680 | INFO | candidate_transformer | Starting resume extraction...
+2026-06-30 20:43:30,680 | INFO | candidate_transformer | Splitting text into sections...
+2026-06-30 20:43:30,680 | INFO | candidate_transformer | Section detected: skills
+2026-06-30 20:43:30,680 | INFO | candidate_transformer | Section detected: experience
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Section splitting complete: {'header': 3, 'experience': 2, 'skills': 1}
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Sections identified: ['header', 'education', 'experience', 'skills', 'projects', 'certifications', 'achievements']
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Extracting contact information...
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Contact extraction complete: 1 emails, 1 phones, 1 links, 0 LinkedIn, 1 GitHub
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Contacts extracted: 1 emails, 1 phones
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Extracting candidate name from header...
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Name extracted: John Doe
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Name extracted: John Doe
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Extracting skills...
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Skills extracted: 3 skills found
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Skills extracted: 3 skills
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Extracting education information...
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | No education section found
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Education extracted: 0 entries
+2026-06-30 20:43:30,681 | INFO | candidate_transformer | Extracting experience information...
+2026-06-30 20:43:30,682 | INFO | candidate_transformer | Experience extraction complete: 0 entries
+2026-06-30 20:43:30,682 | INFO | candidate_transformer | Experience extracted: 0 entries
+2026-06-30 20:43:30,682 | INFO | candidate_transformer | Resume extraction completed successfully
+2026-06-30 20:43:30,682 | INFO | candidate_transformer | TXT file parsed: John Doe (3 skills, 0 experience entries)
+2026-06-30 20:43:30,685 | INFO | candidate_transformer | Parsing TXT file: C:\Users\hp\AppData\Local\Temp\tmp6i1h13la.txt
+2026-06-30 20:43:30,685 | WARNING | candidate_transformer | TXT file is empty, returning empty candidate
+2026-06-30 20:43:30,688 | INFO | candidate_transformer | Parsing TXT file: C:\Users\hp\AppData\Local\Temp\tmphsh2p7z6.txt
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Starting resume extraction...
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Splitting text into sections...
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Section splitting complete: {'header': 2}
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Sections identified: ['header', 'education', 'experience', 'skills', 'projects', 'certifications', 'achievements']
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Extracting contact information...
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Contact extraction complete: 1 emails, 0 phones, 0 links, 0 LinkedIn, 0 GitHub
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Contacts extracted: 1 emails, 0 phones
+2026-06-30 20:43:30,705 | INFO | candidate_transformer | Extracting candidate name from header...
+2026-06-30 20:43:30,706 | INFO | candidate_transformer | Name extracted: Jane Doe
+2026-06-30 20:43:30,706 | INFO | candidate_transformer | Name extracted: Jane Doe
+2026-06-30 20:43:30,706 | INFO | candidate_transformer | Extracting skills...
+2026-06-30 20:43:30,706 | INFO | candidate_transformer | Skills extracted: 0 skills found
+2026-06-30 20:43:30,706 | INFO | candidate_transformer | Skills extracted: 0 skills
+2026-06-30 20:43:30,706 | INFO | candidate_transformer | Extracting education information...
+2026-06-30 20:43:30,706 | INFO | candidate_transformer | No education section found
+2026-06-30 20:43:30,707 | INFO | candidate_transformer | Education extracted: 0 entries
+2026-06-30 20:43:30,707 | INFO | candidate_transformer | Extracting experience information...
+2026-06-30 20:43:30,707 | INFO | candidate_transformer | Experience extraction complete: 0 entries
+2026-06-30 20:43:30,707 | INFO | candidate_transformer | Experience extracted: 0 entries
+2026-06-30 20:43:30,707 | INFO | candidate_transformer | Resume extraction completed successfully
+2026-06-30 20:43:30,707 | INFO | candidate_transformer | TXT file parsed: Jane Doe (0 skills, 0 experience entries)
+2026-06-30 20:43:30,710 | INFO | candidate_transformer | Parsing TXT file: /nonexistent/path.txt

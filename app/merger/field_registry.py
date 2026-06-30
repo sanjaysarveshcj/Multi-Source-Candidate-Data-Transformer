@@ -5,6 +5,8 @@ from app.merger.field_resolvers.dict_resolver import DictResolver
 from app.merger.field_resolvers.numeric_resolver import NumericResolver
 from app.merger.field_resolvers.skill_resolver import SkillResolver
 
+from app.confidence.confidence_engine import ConfidenceEngine
+
 from app.normalizers.email import EmailNormalizer
 from app.normalizers.phone import PhoneNormalizer
 from app.normalizers.skills import SkillNormalizer
@@ -39,7 +41,7 @@ FIELD_CONFIG = {
     },
 
     "skills": {
-        "resolver": SkillResolver(),
+        "resolver": SkillResolver(ConfidenceEngine()),
         "normalizer": None,
     },
 

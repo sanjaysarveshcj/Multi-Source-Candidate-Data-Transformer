@@ -22,7 +22,7 @@ class SkillObjectTransformer(BaseTransformer):
         return [
             {
                 "name": str(skill),
-                "confidence": 1.0,
+                "confidence": 0.5,
                 "sources": [],
             }
             for skill in value
