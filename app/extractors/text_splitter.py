@@ -9,6 +9,15 @@ class TextSplitter:
     """
 
     def split(self, text: str) -> List[str]:
+        # 1. Explicit Hard Separators
+        # Look for sequences of at least 4 dashes, equals, or underscores
+        separator_pattern = re.compile(r"[-=_]{4,}")
+        if separator_pattern.search(text):
+            chunks = [c.strip() for c in separator_pattern.split(text) if len(c.strip()) > 50]
+            logger.info(f"Split document into {len(chunks)} distinct candidates based on explicit separators.")
+            return chunks
+
+        # 2. Heuristic Distance-Based Separator (Fallback)
         # Regex to find emails
         email_pattern = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
         

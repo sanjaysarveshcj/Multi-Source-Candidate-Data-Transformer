@@ -1,5 +1,5 @@
 # pyrefly: ignore [missing-import]
-import pdfplumber
+import fitz
 
 from typing import List
 from app.extractors.text_splitter import TextSplitter
@@ -22,15 +22,15 @@ class ResumePDFParser:
 
             text = ""
 
-            with pdfplumber.open(pdf_path) as pdf:
+            with fitz.open(pdf_path) as pdf:
 
                 logger.info(
-                    f"PDF opened with {len(pdf.pages)} pages"
+                    f"PDF opened with {len(pdf)} pages"
                 )
 
-                for page in pdf.pages:
+                for page in pdf:
 
-                    page_text = page.extract_text()
+                    page_text = page.get_text()
 
                     if page_text:
                         text += page_text + "\n"

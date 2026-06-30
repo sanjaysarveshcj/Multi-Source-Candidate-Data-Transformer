@@ -34,3 +34,21 @@ CGPA: 8.5/10
 CERTIFICATIONS
 - AWS Certified Solutions Architect
 - Docker Certified Associate
+
+----------------------------------------
+
+Nikhil Kumar
+Frontend Developer | Ranchi, India
+aryannikhil29@gmail.com | +91-8235064218
+https://github.com/aryannikhil29
+https://www.linkedin.com/in/aryannikhil29
+
+SUMMARY
+Passionate frontend developer with a knack for building beautiful user interfaces.
+
+SKILLS
+React, JavaScript, HTML, CSS, TailwindCSS, Next.js
+
+EDUCATION
+Bachelor of Computer Applications
+Marwari College, Ranchi | 2023 - 2026

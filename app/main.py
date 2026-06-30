@@ -1,5 +1,9 @@
 # pyrefly: ignore [missing-import]
-from fastapi import FastAPI, UploadFile, File, Form, Request
+from fastapi import FastAPI, UploadFile, File, Form, Request, BackgroundTasks, HTTPException
+# pyrefly: ignore [missing-import]
+from fastapi.responses import HTMLResponse
+# pyrefly: ignore [missing-import]
+from fastapi.templating import Jinja2Templates
 # pyrefly: ignore [missing-import]
 from fastapi.responses import JSONResponse
 from typing import Optional
@@ -55,6 +59,74 @@ app.add_exception_handler(
 ############################################################
 
 pipeline = CandidatePipeline()
+templates = Jinja2Templates(directory="templates")
+
+############################################################
+# Job Store (In-Memory for Background Processing)
+############################################################
+
+jobs = {}
+
+def process_background(job_id: str, pipeline_kwargs: dict, saved_files: list, temp_dir: Path):
+    
+    start_time = time.time()
+    jobs[job_id] = {"status": "processing", "data": None, "error": None}
+    
+    try:
+        logger.info(f"[{job_id}] Executing background pipeline...")
+        response = pipeline.run(**pipeline_kwargs)
+        
+        elapsed = round(time.time() - start_time, 3)
+        logger.info(f"[{job_id}] Pipeline completed successfully in {elapsed}s")
+        
+        jobs[job_id] = {
+            "status": "completed", 
+            "data": response, 
+            "processingTimeSeconds": elapsed,
+            "error": None
+        }
+        
+    except Exception as e:
+        logger.error(f"[{job_id}] Background pipeline failed: {e}")
+        jobs[job_id] = {"status": "failed", "data": None, "error": str(e)}
+        
+    finally:
+        # Cleanup Temporary Files
+        try:
+            for file_path in saved_files:
+                if file_path.exists():
+                    file_path.unlink()
+            if temp_dir.exists():
+                temp_dir.rmdir()
+            logger.info(f"[{job_id}] Temporary files cleaned")
+        except Exception as cleanup_error:
+            logger.warning(f"[{job_id}] Cleanup failed: {cleanup_error}")
+
+############################################################
+# Job Status Endpoint
+############################################################
+
+@app.get("/jobs/{job_id}")
+def get_job_status(job_id: str):
+    if job_id not in jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+        
+    return {
+        "success": True,
+        "job_id": job_id,
+        "status": jobs[job_id]["status"],
+        "data": jobs[job_id].get("data"),
+        "error": jobs[job_id].get("error"),
+        "processingTimeSeconds": jobs[job_id].get("processingTimeSeconds")
+    }
+
+############################################################
+# Web UI Endpoint
+############################################################
+
+@app.get("/ui", response_class=HTMLResponse, tags=["UI"])
+async def get_ui(request: Request):
+    return templates.TemplateResponse(request=request, name="index.html", context={"request": request})
 
 ############################################################
 # Health Check
@@ -88,12 +160,12 @@ def health():
 @app.post("/transform")
 async def transform(
     request: Request,
+    background_tasks: BackgroundTasks,
     recruiter_csv: Optional[UploadFile] = File(None),
     resume_pdf: Optional[UploadFile] = File(None),
     txt_file: Optional[UploadFile] = File(None),
     ats_json_file: Optional[UploadFile] = File(None),
-    github_url: Optional[str] = Form(""),
-
+    github_urls: Optional[str] = Form(None),
     projection_config: Optional[str] = Form(""),
 ):
 
@@ -120,7 +192,7 @@ async def transform(
         resume_pdf,
         txt_file,
         ats_json_file,
-        github_url,
+        github_urls,
     ])
 
     if not has_source:
@@ -253,74 +325,42 @@ async def transform(
             pipeline_kwargs["ats_json"] = str(json_path)
 
         ####################################################
-        # GitHub URL (string — no file needed)
+        # GitHub URLs (string — no file needed)
         ####################################################
 
-        if github_url:
+        if github_urls:
 
             logger.info(
-                f"[{request_id}] GitHub URL received: {github_url}"
+                f"[{request_id}] GitHub URLs received: {github_urls}"
             )
 
-            pipeline_kwargs["github_url"] = github_url
+            github_urls_list = [url.strip() for url in github_urls.split(",") if url.strip()]
+            pipeline_kwargs["github_urls"] = github_urls_list
 
         ####################################################
-        # Execute Pipeline
+        # Execute Pipeline (Background)
         ####################################################
 
-        logger.info(
-            f"[{request_id}] Executing multi-source "
-            f"transformation pipeline..."
-        )
-
-        response = pipeline.run(**pipeline_kwargs)
-
-        ####################################################
-        # Processing Time
-        ####################################################
-
-        elapsed = round(
-            time.time() - start_time,
-            3,
-        )
-
-        logger.info(
-            f"[{request_id}] Pipeline completed "
-            f"successfully in {elapsed}s"
-        )
-
-        ####################################################
-        # Return Response
-        ####################################################
+        jobs[request_id] = {"status": "pending", "data": None, "error": None}
+        background_tasks.add_task(process_background, request_id, pipeline_kwargs, saved_files, temp_dir)
 
         return {
             "success": True,
-            "requestId": request_id,
-            "processingTimeSeconds": elapsed,
-            "data": response,
+            "job_id": request_id,
+            "message": "Processing started in the background."
         }
 
-    finally:
-
-        ####################################################
-        # Cleanup Temporary Files
-        ####################################################
-
+    except Exception as e:
+        
+        # Cleanup Temporary Files if failed before background task
         try:
-
             for file_path in saved_files:
                 if file_path.exists():
                     file_path.unlink()
-
-            temp_dir.rmdir()
-
-            logger.info(
-                f"[{request_id}] Temporary files cleaned"
-            )
-
-        except Exception as cleanup_error:
-
-            logger.warning(
-                f"[{request_id}] Cleanup failed: {cleanup_error}"
-            )
+            if temp_dir.exists():
+                temp_dir.rmdir()
+        except Exception:
+            pass
+            
+        raise e
 

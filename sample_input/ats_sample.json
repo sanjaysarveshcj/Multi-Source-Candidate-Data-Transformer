@@ -1,3 +1,4 @@
+[
 {
     "candidate": {
         "first_name": "Sanjay",
@@ -38,3 +39,28 @@
         ]
     }
 }
+,
+{
+    "candidate": {
+        "first_name": "Nikhil",
+        "last_name": "Kumar",
+        "email": "aryannikhil29@gmail.com",
+        "phone": "+918235064218",
+        "headline": "Frontend Developer",
+        "location": "Ranchi, Jharkhand, India",
+        "skills": ["JavaScript", "HTML", "CSS", "React"],
+        "social_profiles": [
+            {"url": "https://github.com/aryannikhil29"},
+            {"url": "https://linkedin.com/in/aryannikhil29"}
+        ],
+        "experience": [],
+        "education": [
+            {
+                "institution": "Marwari College",
+                "degree": "Bachelor of Computer Applications",
+                "end_year": 2026
+            }
+        ]
+    }
+}
+]

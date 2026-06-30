@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Transformer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-group p.desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            background: var(--bg);
+            border: 1px dashed var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-input-wrapper:hover {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-name {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button.submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        button.submit-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        button.submit-btn:disabled {
+            background: var(--surface-hover);
+            cursor: not-allowed;
+            color: var(--text-muted);
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status & Results */
+        .status-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: var(--surface-hover);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status-box.processing { color: var(--primary); border: 1px solid var(--primary); }
+        .status-box.completed { color: var(--success); border: 1px solid var(--success); }
+        .status-box.failed { color: var(--error); border: 1px solid var(--error); }
+
+        .result-container {
+            display: none;
+            margin-top: 2rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .result-header {
+            background: var(--surface);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-body {
+            padding: 1rem;
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        pre {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        /* Analytics Dashboard */
+        .dashboard {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .metric-card .sub-value {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            justify-content: center;
+            min-height: 2.5rem;
+            align-items: center;
+        }
+        
+        .skill-tag {
+            background: var(--surface-hover);
+            color: var(--text);
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Candidate Transformer</h1>
+            <p>Upload files to instantly extract, resolve, and merge candidate profiles.</p>
+        </div>
+
+        <div class="card">
+            <form id="transformForm">
+                
+                <div class="form-group">
+                    <label>Recruiter CSV</label>
+                    <div class="file-input-wrapper">
+                        <span>Click or Drag to Upload CSV</span>
+                        <input type="file" name="recruiter_csv" accept=".csv" onchange="updateFileName(this)">
+                        <span class="file-name"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Resume PDF</label>
+                    <div class="file-input-wrapper">
+                        <span>Click or Drag to Upload PDF</span>
+                        <input type="file" name="resume_pdf" accept=".pdf" onchange="updateFileName(this)">
+                        <span class="file-name"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>ATS JSON</label>
+                    <div class="file-input-wrapper">
+                        <span>Click or Drag to Upload ATS JSON</span>
+                        <input type="file" name="ats_json_file" accept=".json" onchange="updateFileName(this)">
+                        <span class="file-name"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Plain Text (TXT)</label>
+                    <div class="file-input-wrapper">
+                        <span>Click or Drag to Upload TXT</span>
+                        <input type="file" name="txt_file" accept=".txt" onchange="updateFileName(this)">
+                        <span class="file-name"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="github_urls">GitHub URLs (Comma Separated)</label>
+                    <input type="text" id="github_urls" name="github_urls" placeholder="e.g. https://github.com/user1, https://github.com/user2">
+                </div>
+
+                <div class="form-group">
+                    <label>Projection Config (JSON)</label>
+                    <p class="desc">Optional: Define custom output schema mapping</p>
+                    <textarea name="projection_config" placeholder='{"new_field": "existing_field"}'></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span>Transform</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+            </form>
+
+            <div id="statusBox" class="status-box"></div>
+        </div>
+
+        <div class="dashboard" id="dashboard">
+            <div class="metric-card">
+                <h3>Total Candidates</h3>
+                <div class="value" id="metricTotal">-</div>
+            </div>
+            <div class="metric-card">
+                <h3>Contact Info Found</h3>
+                <div class="value" id="metricContact">-</div>
+            </div>
+            <div class="metric-card">
+                <h3>Sources Used</h3>
+                <div class="sub-value" id="metricSources">
+                    <!-- tags injected here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <div class="result-header">
+                <h3>Transformation Output</h3>
+                <span id="timingBadge" style="font-size: 0.9rem; color: var(--text-muted);"></span>
+            </div>
+            <div class="result-body">
+                <pre id="resultPre"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateFileName(input) {
+            const fileNameSpan = input.nextElementSibling;
+            if (input.files.length > 0) {
+                fileNameSpan.textContent = input.files[0].name;
+            } else {
+                fileNameSpan.textContent = '';
+            }
+        }
+
+        const form = document.getElementById('transformForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = document.getElementById('spinner');
+        const statusBox = document.getElementById('statusBox');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultPre = document.getElementById('resultPre');
+        const timingBadge = document.getElementById('timingBadge');
+        
+        let pollInterval;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset UI
+            submitBtn.disabled = true;
+            spinner.style.display = 'block';
+            statusBox.style.display = 'block';
+            statusBox.className = 'status-box processing';
+            statusBox.textContent = 'Uploading files and submitting job...';
+            resultContainer.style.display = 'none';
+            document.getElementById('dashboard').style.display = 'none';
+            if (pollInterval) clearInterval(pollInterval);
+
+            const formData = new FormData(form);
+            
+            // Remove empty fields
+            for (let [key, value] of Array.from(formData.entries())) {
+                if (value instanceof File && value.name === '') {
+                    formData.delete(key);
+                } else if (typeof value === 'string' && value.trim() === '') {
+                    formData.delete(key);
+                }
+            }
+
+            try {
+                const response = await fetch('/transform', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to submit job');
+                }
+
+                const jobId = data.job_id;
+                statusBox.textContent = `Processing Background Job: ${jobId}`;
+                
+                // Start polling
+                pollJob(jobId);
+
+            } catch (err) {
+                showError(err.message);
+            }
+        });
+
+        async function pollJob(jobId) {
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/jobs/${jobId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'completed') {
+                        clearInterval(pollInterval);
+                        showSuccess(data);
+                    } else if (data.status === 'failed') {
+                        clearInterval(pollInterval);
+                        showError(`Job Failed: ${data.error}`);
+                    }
+                    // if pending or processing, just wait
+                } catch (err) {
+                    clearInterval(pollInterval);
+                    showError(`Polling error: ${err.message}`);
+                }
+            }, 2000); // poll every 2 seconds
+        }
+
+        function calculateAnalytics(pipelineData) {
+            const candidates = pipelineData.data || [];
+            document.getElementById('metricTotal').textContent = candidates.length;
+            
+            let contactCount = 0;
+            
+            candidates.forEach(wrapper => {
+                const c = wrapper.candidate;
+                if ((c.emails && c.emails.length > 0) || (c.phones && c.phones.length > 0)) {
+                    contactCount++;
+                }
+            });
+            
+            const contactPct = candidates.length > 0 ? Math.round((contactCount / candidates.length) * 100) : 0;
+            document.getElementById('metricContact').textContent = `${contactPct}%`;
+            
+            const sources = pipelineData.sources_used || [];
+            const sourcesContainer = document.getElementById('metricSources');
+            sourcesContainer.innerHTML = '';
+            
+            if (sources.length > 0) {
+                sources.forEach(src => {
+                    const span = document.createElement('span');
+                    span.className = 'skill-tag';
+                    span.textContent = src;
+                    sourcesContainer.appendChild(span);
+                });
+            } else {
+                sourcesContainer.textContent = 'None Found';
+                sourcesContainer.style.color = 'var(--text-muted)';
+            }
+            
+            document.getElementById('dashboard').style.display = 'grid';
+        }
+
+        function showSuccess(data) {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+            statusBox.className = 'status-box completed';
+            statusBox.textContent = 'Processing Completed!';
+            
+            if (data.data) {
+                calculateAnalytics(data.data);
+            }
+            
+            timingBadge.textContent = `Time: ${data.processingTimeSeconds}s`;
+            resultPre.textContent = JSON.stringify(data.data, null, 2);
+            resultContainer.style.display = 'block';
+        }
+
+        function showError(msg) {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+            statusBox.className = 'status-box failed';
+            statusBox.textContent = msg;
+        }
+    </script>
+</body>
+</html>

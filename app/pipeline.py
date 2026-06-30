@@ -43,7 +43,7 @@ class CandidatePipeline:
         self,
         csv_path=None,
         resume_path=None,
-        github_url=None,
+        github_urls=None,
 
         ats_json=None,
         txt_path=None,
@@ -85,17 +85,18 @@ class CandidatePipeline:
                 logger.warning(f"Failed to parse Resume PDF: {e}")
 
         ########################################
-        # Parse GitHub URL
+        # Parse GitHub URLs
         ########################################
 
-        if github_url:
-            try:
-                logger.info("Parsing GitHub URL...")
-                github = self.github_parser.parse(github_url)
-                candidates.extend(github)
-                sources_used.append("GitHub")
-            except Exception as e:
-                logger.warning(f"Failed to parse GitHub URL: {e}")
+        if github_urls:
+            for url in github_urls:
+                try:
+                    logger.info(f"Parsing GitHub URL: {url}")
+                    github = self.github_parser.parse(url)
+                    candidates.extend(github)
+                    sources_used.append("GitHub")
+                except Exception as e:
+                    logger.warning(f"Failed to parse GitHub URL {url}: {e}")
 
 
 
