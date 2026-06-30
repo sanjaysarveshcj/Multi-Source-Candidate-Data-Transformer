@@ -2,6 +2,7 @@ from typing import List
 from app.models.raw_candidate import RawCandidate
 from app.sources.parser import SourceParser
 from app.extractors.resume_extractor import ResumeExtractor
+from app.extractors.text_splitter import TextSplitter
 from app.logging.logger import logger
 
 
@@ -18,6 +19,7 @@ class TxtFileParser(SourceParser):
     def __init__(self):
 
         self.extractor = ResumeExtractor()
+        self.text_splitter = TextSplitter()
 
     ########################################################
     # Read text from file path or raw string
@@ -71,7 +73,10 @@ class TxtFileParser(SourceParser):
         # Reuse ResumeExtractor for structured extraction
         ####################################################
 
-        candidates = self.extractor.extract(text)
+        chunks = self.text_splitter.split(text)
+        candidates = []
+        for chunk in chunks:
+            candidates.extend(self.extractor.extract(chunk))
 
         # Override source label
         for candidate in candidates:

@@ -74,13 +74,12 @@ class CandidatePipeline:
         if resume_path:
             try:
                 logger.info("Parsing Resume PDF...")
-                resume_text = self.resume_parser.parse(
+                resume_chunks = self.resume_parser.parse(
                     resume_path
                 )
-                resume = self.resume_extractor.extract(
-                    resume_text
-                )
-                candidates.extend(resume)
+                for chunk in resume_chunks:
+                    resume = self.resume_extractor.extract(chunk)
+                    candidates.extend(resume)
                 sources_used.append("Resume")
             except Exception as e:
                 logger.warning(f"Failed to parse Resume PDF: {e}")

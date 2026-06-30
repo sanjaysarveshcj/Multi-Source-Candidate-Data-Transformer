@@ -14,7 +14,7 @@ def test_pipeline():
         links={"linkedin": None, "github": None, "portfolio": None, "other": []}
     )])
 
-    pipeline.resume_parser.parse = MagicMock()
+    pipeline.resume_parser.parse = MagicMock(return_value=["fake text chunk"])
 
     pipeline.resume_extractor.extract = MagicMock(return_value=[RawCandidate(
         source="Resume", full_name="John Doe",

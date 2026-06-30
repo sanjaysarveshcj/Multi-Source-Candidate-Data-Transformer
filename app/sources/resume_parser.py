@@ -1,13 +1,18 @@
 # pyrefly: ignore [missing-import]
 import pdfplumber
 
+from typing import List
+from app.extractors.text_splitter import TextSplitter
 from app.logging.logger import logger
 from app.exceptions.base_exception import CandidateTransformerException
 
 
 class ResumePDFParser:
 
-    def parse(self, pdf_path: str) -> str:
+    def __init__(self):
+        self.text_splitter = TextSplitter()
+
+    def parse(self, pdf_path: str) -> List[str]:
 
         logger.info(
             f"Parsing resume PDF: {pdf_path}"
@@ -34,7 +39,11 @@ class ResumePDFParser:
                 f"Resume PDF parsed: {len(text)} characters extracted"
             )
 
-            return text.strip()
+            text = text.strip()
+            
+            chunks = self.text_splitter.split(text)
+
+            return chunks
 
         except Exception as e:
 
