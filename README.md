@@ -32,8 +32,10 @@ A pipeline for extracting, merging, and dynamically reshaping candidate data fro
 
 5. Setup your GitHub Access Token:
    - Go to [GitHub Developer Settings](https://github.com/settings/tokens) and generate a new Personal Access Token (PAT).
-   - Open `app/sources/github_parser.py`.
-   - Locate `YOUR_GITHUB_TOKEN_HERE` in the code and replace it with your newly generated token.
+   - Set it as an environment variable named `GITHUB_TOKEN`:
+     - Windows (Command Prompt): `set GITHUB_TOKEN=your_token_here`
+     - Windows (PowerShell): `$env:GITHUB_TOKEN="your_token_here"`
+     - Linux/macOS: `export GITHUB_TOKEN="your_token_here"`
 
 ---
 

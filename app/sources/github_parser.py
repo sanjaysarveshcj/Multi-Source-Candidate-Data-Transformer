@@ -46,9 +46,10 @@ class GitHubURLParser(SourceParser):
 
         url = f"{self.GITHUB_API}/users/{username}"
 
-        headers = {
-            "Authorization": "token YOUR_GITHUB_TOKEN_HERE"
-        }
+        headers = {}
+        github_token = os.environ.get("GITHUB_TOKEN")
+        if github_token:
+            headers["Authorization"] = f"token {github_token}"
 
         response = requests.get(url, headers=headers, timeout=10)
 
@@ -70,9 +71,10 @@ class GitHubURLParser(SourceParser):
             "type": "owner",
         }
 
-        headers = {
-            "Authorization": "token YOUR_GITHUB_TOKEN_HERE"
-        }
+        headers = {}
+        github_token = os.environ.get("GITHUB_TOKEN")
+        if github_token:
+            headers["Authorization"] = f"token {github_token}"
 
         response = requests.get(
             url, headers=headers, params=params, timeout=10
