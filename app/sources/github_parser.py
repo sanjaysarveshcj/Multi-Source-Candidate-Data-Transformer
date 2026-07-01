@@ -1,3 +1,4 @@
+import os
 import requests
 import re
 from typing import List
@@ -45,7 +46,11 @@ class GitHubURLParser(SourceParser):
 
         url = f"{self.GITHUB_API}/users/{username}"
 
-        response = requests.get(url, timeout=10)
+        headers = {
+            "Authorization": "token YOUR_GITHUB_TOKEN_HERE"
+        }
+
+        response = requests.get(url, headers=headers, timeout=10)
 
         response.raise_for_status()
 
@@ -65,8 +70,12 @@ class GitHubURLParser(SourceParser):
             "type": "owner",
         }
 
+        headers = {
+            "Authorization": "token YOUR_GITHUB_TOKEN_HERE"
+        }
+
         response = requests.get(
-            url, params=params, timeout=10
+            url, headers=headers, params=params, timeout=10
         )
 
         response.raise_for_status()

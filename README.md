@@ -30,6 +30,11 @@ A pipeline for extracting, merging, and dynamically reshaping candidate data fro
   pip install -r requirements.txt
   ```
 
+5. Setup your GitHub Access Token:
+   - Go to [GitHub Developer Settings](https://github.com/settings/tokens) and generate a new Personal Access Token (PAT).
+   - Open `app/sources/github_parser.py`.
+   - Locate `YOUR_GITHUB_TOKEN_HERE` in the code and replace it with your newly generated token.
+
 ---
 
 ## Running the API Server
